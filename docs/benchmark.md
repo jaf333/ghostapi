@@ -4,12 +4,12 @@
 
 Two paths to the same result, timed in the same process:
 
-| Path | What it does |
-| --- | --- |
+| Path                           | What it does                                                                                      |
+| ------------------------------ | ------------------------------------------------------------------------------------------------- |
 | `browser (recorded UI replay)` | Opens Chrome, navigates, fills the recorded form fields, presses the recorded submitter, settles. |
-| `ghostapi (direct API)` | Sends the one HTTP request the operation was derived from. |
+| `ghostapi (direct API)`        | Sends the one HTTP request the operation was derived from.                                        |
 
-## What is *not* measured, and why
+## What is _not_ measured, and why
 
 The browser path runs **no model**. It is a scripted replay of steps GhostAPI
 recorded, not an LLM agent reasoning over a DOM.
@@ -72,7 +72,7 @@ ghostapi (direct API)           68 ms             0         1            0  0
 
 - Numbers come from one machine. Compare ratios, not absolutes.
 - The reference application is local, so network latency is near zero for both
-  paths. Over a real network the browser path's extra 32 requests cost *more*
+  paths. Over a real network the browser path's extra 32 requests cost _more_
   relatively, not less.
 - The first API call in a process pays Node's fetch warm-up. `--runs` averages it
   away; with `--runs 1` expect a higher figure.

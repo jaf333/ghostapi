@@ -73,3 +73,22 @@ describe('endpointKey', () => {
     );
   });
 });
+
+describe('regressions', () => {
+  it('does not strip a trailing "s" from words that were never plural', () => {
+    // `/api/status/{id}` must not become `getStatu`; that name would end up in
+    // a published client and an MCP tool list.
+    expect(inferPathTemplate(['/api/status/a1b2c3d4', '/api/status/e5f6a7b8']).params).toEqual([
+      'statusId',
+    ]);
+    expect(inferPathTemplate(['/api/bus/1', '/api/bus/2']).params).toEqual(['busId']);
+    expect(inferPathTemplate(['/api/analysis/1', '/api/analysis/2']).params).toEqual([
+      'analysisId',
+    ]);
+  });
+
+  it('still singularises real plurals', () => {
+    expect(inferPathTemplate(['/api/todos/1', '/api/todos/2']).params).toEqual(['todoId']);
+    expect(inferPathTemplate(['/api/boxes/1', '/api/boxes/2']).params).toEqual(['boxId']);
+  });
+});

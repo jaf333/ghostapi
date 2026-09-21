@@ -124,3 +124,31 @@ describe('identifier and path guards', () => {
     expect(assertSafePathSegment('my-target')).toBe('my-target');
   });
 });
+
+describe('regressions', () => {
+  it('blocks private addresses written as IPv4-mapped IPv6', () => {
+    // new URL() rewrites [::ffff:169.254.169.254] to [::ffff:a9fe:a9fe], which
+    // matches none of the textual IPv6 prefixes. This was an SSRF bypass for
+    // imported targets.
+    for (const url of [
+      'http://[::ffff:169.254.169.254]/latest/meta-data/',
+      'http://[::ffff:127.0.0.1]/',
+      'http://[::ffff:10.0.0.5]/',
+      'http://[::ffff:192.168.1.1]/',
+      'http://[0:0:0:0:0:ffff:a9fe:a9fe]/',
+    ]) {
+      expect(() => assertSafeUrl(url, IMPORTED_URL_POLICY), url).toThrow(/private/i);
+    }
+  });
+
+  it('blocks the unspecified address', () => {
+    expect(() => assertSafeUrl('http://[::]/', IMPORTED_URL_POLICY)).toThrow(/private/i);
+    expect(() => assertSafeUrl('http://0.0.0.0/', IMPORTED_URL_POLICY)).toThrow(/private/i);
+  });
+
+  it('still allows genuinely public IPv6 addresses', () => {
+    expect(assertSafeUrl('https://[2606:4700:4700::1111]/', IMPORTED_URL_POLICY).protocol).toBe(
+      'https:',
+    );
+  });
+});

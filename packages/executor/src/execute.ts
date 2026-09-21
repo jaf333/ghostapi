@@ -1,6 +1,7 @@
 import {
   assertSafeUrl,
   DEFAULT_URL_POLICY,
+  defaultRedactor,
   ErrorCodes,
   formatIssues,
   GhostError,
@@ -209,10 +210,14 @@ function httpFailure(
   data: unknown,
 ): GhostError {
   const isAuth = status === 401 || status === 403;
+  // A failing endpoint often reflects the submitted values back. Redact before
+  // the body reaches an error message, a log or an MCP client — this is a
+  // live response, so nothing has scrubbed it yet.
+  const safe = defaultRedactor.redactValue(data, 'response').value;
   const detail =
-    typeof data === 'object' && data !== null
-      ? JSON.stringify(data).slice(0, 400)
-      : String(data ?? '').slice(0, 400);
+    typeof safe === 'object' && safe !== null
+      ? JSON.stringify(safe).slice(0, 400)
+      : String(safe ?? '').slice(0, 400);
   return new GhostError({
     code: isAuth ? ErrorCodes.AuthExpired : ErrorCodes.ExecutionFailed,
     title: 'Operation execution failed',

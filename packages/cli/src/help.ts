@@ -16,6 +16,7 @@ const COMMANDS: readonly (readonly [string, string])[] = [
   ['import <file>', 'import a target definition someone else exported'],
   ['eval', 'run reliability evals against the target'],
   ['benchmark <operation>', 'measure the browser path against the API path'],
+  ['traces [id]', 'read back what an execution actually did'],
   ['mcp', 'serve the current operations over stdio MCP'],
   ['doctor', 'check Chrome, sessions, engines and workspace'],
 ];

@@ -149,6 +149,21 @@ export class SecretRedactor {
         value[name] = REDACTED;
         continue;
       }
+      // Header names get the same key patterns as body keys. The fixed list
+      // above can never enumerate every vendor's header —
+      // `X-Shopify-Access-Token` is not on it, and its value matches no known
+      // credential format, so without this it would be stored verbatim and
+      // later baked into an exported operation as a literal.
+      if (this.isSensitiveKey(name)) {
+        redactions.push({
+          path,
+          reason: `sensitive-key:${name}`,
+          originalType: 'string',
+          originalLength: rawValue.length,
+        });
+        value[name] = REDACTED;
+        continue;
+      }
       const matched = this.matchSensitiveValue(rawValue);
       if (matched) {
         redactions.push({

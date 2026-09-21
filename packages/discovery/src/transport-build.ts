@@ -1,4 +1,5 @@
 import {
+  defaultRedactor,
   REDACTED,
   type BodyKind,
   type HeaderBinding,
@@ -135,6 +136,11 @@ export function buildHeaderBindings(
     for (const [name, value] of Object.entries(observation.requestHeaders)) {
       if (value === REDACTED || NEVER_REPLAY.has(name)) continue;
       if (!REPLAYABLE_HEADER_PREFIXES.some((prefix) => name.startsWith(prefix))) continue;
+      // Defence in depth. Capture should already have redacted anything
+      // credential-shaped; a header that reaches here still looking like one
+      // must not be frozen into an operation that gets exported.
+      if (defaultRedactor.isSensitiveHeader(name) || defaultRedactor.isSensitiveKey(name)) continue;
+      if (defaultRedactor.matchSensitiveValue(value)) continue;
       const bucket = counts.get(name) ?? new Map<string, number>();
       bucket.set(value, (bucket.get(value) ?? 0) + 1);
       counts.set(name, bucket);

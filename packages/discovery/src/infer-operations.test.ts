@@ -197,3 +197,43 @@ describe('inferOperations', () => {
     }
   });
 });
+
+describe('regressions', () => {
+  it('authenticates with any header the capture layer treats as a credential', () => {
+    // x-session-token is redacted at capture but was not recognised here, so
+    // the operation shipped with strategy "none" and could only ever 401.
+    const result = inferOperations({
+      target,
+      observations: [networkFixture({ sensitiveRequestHeaders: ['x-session-token'] })],
+    });
+    const operation = result.operations.find((item) => item.name === 'createTodo');
+    expect(operation?.auth).toMatchObject({ strategy: 'header', header: 'x-session-token' });
+  });
+
+  it('never freezes a credential-shaped header into a transport literal', () => {
+    const result = inferOperations({
+      target,
+      observations: [
+        networkFixture({
+          requestHeaders: {
+            'content-type': 'application/json',
+            'x-vendor-token': 'shpat_1234567890abcdef1234567890abcdef',
+            'x-api-version': '2026-01-01',
+          },
+        }),
+        networkFixture({
+          requestHeaders: {
+            'content-type': 'application/json',
+            'x-vendor-token': 'shpat_1234567890abcdef1234567890abcdef',
+            'x-api-version': '2026-01-01',
+          },
+        }),
+      ],
+    });
+    const operation = result.operations.find((item) => item.name === 'createTodo');
+    const serialized = JSON.stringify(operation?.transport);
+    expect(serialized).not.toContain('shpat_');
+    // A harmless version pin is still replayed.
+    expect(serialized).toContain('2026-01-01');
+  });
+});

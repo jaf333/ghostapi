@@ -75,3 +75,40 @@ describe('SecretRedactor', () => {
     expect(result.redactions).toHaveLength(0);
   });
 });
+
+describe('regressions', () => {
+  it('redacts a vendor credential header nobody enumerated', () => {
+    // A header name that is on no denylist, carrying a value that matches no
+    // known credential format. Before this fix it was stored verbatim and then
+    // baked into exported operations as a literal.
+    const result = defaultRedactor.redactHeaders({
+      'X-Shopify-Access-Token': 'shpat_1234567890abcdef1234567890abcdef',
+    });
+    expect(result.value['x-shopify-access-token']).toBe(REDACTED);
+    expect(result.redactions[0]?.reason).toMatch(/sensitive-key/);
+  });
+
+  it('redacts credential-named headers across naming conventions', () => {
+    const headers = {
+      'X-Session-Token': 'abcdef123456',
+      'X-Vendor-Secret': 'abcdef123456',
+      'Private-Key-Header': 'abcdef123456',
+      'X-Credential': 'abcdef123456',
+    };
+    const result = defaultRedactor.redactHeaders(headers);
+    for (const value of Object.values(result.value)) {
+      expect(value).toBe(REDACTED);
+    }
+  });
+
+  it('still leaves ordinary custom headers intact', () => {
+    const result = defaultRedactor.redactHeaders({
+      'X-Request-Id': 'abc-123',
+      'X-Api-Version': '2026-01-01',
+      'Accept-Language': 'en-GB',
+    });
+    expect(result.value['x-request-id']).toBe('abc-123');
+    expect(result.value['x-api-version']).toBe('2026-01-01');
+    expect(result.value['accept-language']).toBe('en-GB');
+  });
+});

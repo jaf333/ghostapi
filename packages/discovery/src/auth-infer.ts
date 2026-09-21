@@ -1,4 +1,4 @@
-import type { AuthStrategy, NetworkObservation } from '@ghostapi/core';
+import { SENSITIVE_HEADERS, type AuthStrategy, type NetworkObservation } from '@ghostapi/core';
 
 function envNameFor(slug: string): string {
   const normalized = slug
@@ -40,7 +40,12 @@ export function inferAuth(
       prefix: 'Bearer ',
     };
   }
-  for (const custom of ['x-api-key', 'x-auth-token', 'x-access-token', 'api-key']) {
+  // Every header the capture layer treats as a credential is a header this can
+  // authenticate with. A hand-maintained subset here would silently produce an
+  // operation with `strategy: "none"` that can only ever return 401.
+  const cookieHeaders = new Set(['cookie', 'set-cookie']);
+  for (const custom of SENSITIVE_HEADERS) {
+    if (custom === 'authorization' || cookieHeaders.has(custom)) continue;
     if (headerNames.has(custom)) {
       return { strategy: 'header', header: custom, env: envNameFor(targetSlug) };
     }

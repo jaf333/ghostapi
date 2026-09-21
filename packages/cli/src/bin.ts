@@ -12,6 +12,7 @@ import { exportCommand, importCommand } from './commands/export.js';
 import { benchmarkCommand, evalCommand } from './commands/quality.js';
 import { doctorCommand } from './commands/doctor.js';
 import { mcpCommand } from './commands/mcp.js';
+import { tracesCommand } from './commands/traces.js';
 
 async function initCommand(argv: readonly string[]): Promise<void> {
   const parsed = parse(argv, {});
@@ -48,6 +49,8 @@ const HANDLERS: Record<string, (argv: readonly string[]) => Promise<void>> = {
   eval: evalCommand,
   benchmark: benchmarkCommand,
   mcp: mcpCommand,
+  traces: tracesCommand,
+  trace: tracesCommand,
   doctor: doctorCommand,
 };
 

@@ -2,9 +2,11 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import {
   assertSafeUrl,
+  defaultRedactor,
   ErrorCodes,
   GhostError,
   IMPORTED_URL_POLICY,
+  REDACTED,
   targetBundleSchema,
   type TargetBundle,
   type UrlPolicy,
@@ -77,14 +79,28 @@ export async function readTargetBundle(
     }
   }
 
-  const serialized = JSON.stringify(bundle);
-  if (/"(authorization|cookie|set-cookie)"\s*:\s*"(?!__ghostapi_redacted__)/i.test(serialized)) {
-    throw new GhostError({
-      code: ErrorCodes.UnsafeTarget,
-      title: 'Target file contains credential material',
-      detail: 'The bundle carries a literal authorization or cookie header value.',
-      remedy: 'Refusing to import. Ask whoever produced it to re-export with a current GhostAPI.',
-    });
+  // Inspect every header literal the bundle would replay, not a fixed list of
+  // three names: the interesting case is a vendor header nobody enumerated.
+  for (const operation of bundle.operations) {
+    const transports = [operation.transport, ...operation.fallbacks];
+    for (const transport of transports) {
+      if (transport.type !== 'http' && transport.type !== 'graphql') continue;
+      for (const [name, binding] of Object.entries(transport.headers ?? {})) {
+        if (binding.kind !== 'literal') continue;
+        const looksSensitive =
+          defaultRedactor.isSensitiveHeader(name) ||
+          defaultRedactor.isSensitiveKey(name) ||
+          defaultRedactor.matchSensitiveValue(binding.value) !== undefined;
+        if (!looksSensitive || binding.value === REDACTED) continue;
+        throw new GhostError({
+          code: ErrorCodes.UnsafeTarget,
+          title: 'Target file contains credential material',
+          detail: `Operation "${operation.name}" would replay a literal ${name} header.`,
+          remedy:
+            'Refusing to import. Ask whoever produced it to re-export with a current GhostAPI, which references credentials instead of embedding them.',
+        });
+      }
+    }
   }
 
   return { bundle, warnings };

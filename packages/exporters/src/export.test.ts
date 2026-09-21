@@ -1,4 +1,4 @@
-import { mkdtemp, readFile } from 'node:fs/promises';
+import { mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -8,6 +8,7 @@ import { sanitizeDescription, skillNameFor, exportSkill } from './export-skill.j
 import { renderType } from './ts-types.js';
 import { exportMcp } from './export-mcp.js';
 import { exportTypescript } from './export-ts.js';
+import { readTargetBundle } from './export-target.js';
 
 const target = targetSchema.parse({
   slug: 'demo-app',
@@ -226,5 +227,74 @@ describe('exports carry no credentials', () => {
     };
     expect(manifest.operations[0]?.readOnly).toBe(true);
     expect(manifest.operations[0]?.destructive).toBe(false);
+  });
+});
+
+describe('importing an untrusted target bundle', () => {
+  async function bundleFile(mutate: (bundle: Record<string, unknown>) => void): Promise<string> {
+    const dir = await mkdtemp(join(tmpdir(), 'ghost-bundle-'));
+    const file = join(dir, 'target.ghost.json');
+    const base = {
+      format: 1,
+      generator: 'ghostapi/test',
+      exportedAt: 1,
+      target: { ...target, startUrl: 'https://app.example.com', origin: 'https://app.example.com' },
+      operations: [op({})],
+    } as unknown as Record<string, unknown>;
+    mutate(base);
+    await writeFile(file, JSON.stringify(base), 'utf8');
+    return file;
+  }
+
+  it('accepts a well-formed public bundle', async () => {
+    const file = await bundleFile(() => undefined);
+    const audit = await readTargetBundle(file);
+    expect(audit.bundle.operations).toHaveLength(1);
+  });
+
+  it('blocks a bundle aimed at cloud metadata, including via IPv4-mapped IPv6', async () => {
+    for (const host of ['169.254.169.254', '[::ffff:169.254.169.254]', '127.0.0.1', '[::1]']) {
+      const file = await bundleFile((bundle) => {
+        const targetEntry = bundle.target as Record<string, unknown>;
+        targetEntry.startUrl = `http://${host}/latest/meta-data/`;
+        targetEntry.origin = `http://${host}`;
+      });
+      await expect(readTargetBundle(file), host).rejects.toThrow(/private/i);
+    }
+  });
+
+  it('blocks a bundle whose operation URL points at a private address', async () => {
+    const file = await bundleFile((bundle) => {
+      const operations = bundle.operations as Record<string, unknown>[];
+      const transport = operations[0]?.transport as Record<string, unknown>;
+      transport.urlTemplate = 'http://[::ffff:10.0.0.5]/api/todos';
+    });
+    await expect(readTargetBundle(file)).rejects.toThrow(/private/i);
+  });
+
+  it('refuses a bundle that would replay a literal credential header', async () => {
+    const file = await bundleFile((bundle) => {
+      const operations = bundle.operations as Record<string, unknown>[];
+      const transport = operations[0]?.transport as Record<string, unknown>;
+      transport.headers = {
+        'x-vendor-token': { kind: 'literal', value: 'shpat_1234567890abcdef1234567890abcdef' },
+      };
+    });
+    await expect(readTargetBundle(file)).rejects.toThrow(/credential/i);
+  });
+
+  it('refuses a bundle from an unknown format version', async () => {
+    const file = await bundleFile((bundle) => {
+      bundle.format = 99;
+    });
+    await expect(readTargetBundle(file)).rejects.toThrow(/Unsupported target file/i);
+  });
+
+  it('warns about destructive operations instead of hiding them', async () => {
+    const file = await bundleFile((bundle) => {
+      bundle.operations = [op({ name: 'deleteTodo', verb: 'delete', destructive: true })];
+    });
+    const audit = await readTargetBundle(file);
+    expect(audit.warnings.join(' ')).toMatch(/deleteTodo is destructive/);
   });
 });

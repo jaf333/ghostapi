@@ -14,21 +14,46 @@ export interface UrlPolicy {
 export const DEFAULT_URL_POLICY: UrlPolicy = { allowPrivateNetwork: true };
 export const IMPORTED_URL_POLICY: UrlPolicy = { allowPrivateNetwork: false };
 
+function isPrivateIpv4(address: string): boolean {
+  const [a = 0, b = 0] = address.split('.').map(Number);
+  if (a === 10 || a === 127 || a === 0) return true;
+  if (a === 192 && b === 168) return true;
+  if (a === 172 && b >= 16 && b <= 31) return true;
+  if (a === 169 && b === 254) return true;
+  if (a === 100 && b >= 64 && b <= 127) return true;
+  return false;
+}
+
+/**
+ * Extracts the IPv4 address embedded in an IPv4-mapped or IPv4-compatible IPv6
+ * address.
+ *
+ * `new URL()` rewrites `[::ffff:169.254.169.254]` to `[::ffff:a9fe:a9fe]`, which
+ * matches none of the textual IPv6 prefixes below. Without this, the cloud
+ * metadata endpoint walks straight through the private-network block.
+ */
+function embeddedIpv4(host: string): string | undefined {
+  const groups = host.split(':');
+  const last = groups[groups.length - 1] ?? '';
+  if (last.includes('.')) return isIP(last) === 4 ? last : undefined;
+  if (groups.length < 3) return undefined;
+  const mapped = /^(?:0*:)*(?:0*f{4}:)?([0-9a-f]{1,4}):([0-9a-f]{1,4})$/i.exec(host);
+  if (!mapped) return undefined;
+  const high = Number.parseInt(mapped[1] as string, 16);
+  const low = Number.parseInt(mapped[2] as string, 16);
+  if (Number.isNaN(high) || Number.isNaN(low)) return undefined;
+  return `${high >> 8}.${high & 0xff}.${low >> 8}.${low & 0xff}`;
+}
+
 function isPrivateHost(hostname: string): boolean {
   const host = hostname.replace(/^\[|\]$/g, '').toLowerCase();
   if (host === 'localhost' || host.endsWith('.localhost') || host.endsWith('.local')) return true;
-  if (host === '::1' || host === '0:0:0:0:0:0:0:1') return true;
-  if (isIP(host) === 4) {
-    const parts = host.split('.').map(Number);
-    const [a = 0, b = 0] = parts;
-    if (a === 10 || a === 127 || a === 0) return true;
-    if (a === 192 && b === 168) return true;
-    if (a === 172 && b >= 16 && b <= 31) return true;
-    if (a === 169 && b === 254) return true;
-    if (a === 100 && b >= 64 && b <= 127) return true;
-  }
+  if (host === '::1' || host === '::' || host === '0:0:0:0:0:0:0:1') return true;
+  if (isIP(host) === 4) return isPrivateIpv4(host);
   if (isIP(host) === 6) {
     if (host.startsWith('fc') || host.startsWith('fd') || host.startsWith('fe80')) return true;
+    const embedded = embeddedIpv4(host);
+    if (embedded !== undefined && isPrivateIpv4(embedded)) return true;
   }
   return false;
 }

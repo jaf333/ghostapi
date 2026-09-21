@@ -44,6 +44,22 @@ const CAPTURED_RESOURCE_TYPES = new Set([
   'EventSource',
 ]);
 const MAX_STACK_FRAMES = 4;
+/**
+ * A request whose `loadingFinished` never arrives — the tab navigated away, a
+ * service worker swallowed it, the socket died — would otherwise sit in memory
+ * for the life of the session. Long interactive sessions are the normal case,
+ * so both maps are bounded and evict oldest-first.
+ */
+const MAX_PENDING_REQUESTS = 2_000;
+const MAX_PENDING_EXTRA_HEADERS = 2_000;
+
+function evictOldest<K, V>(map: Map<K, V>, limit: number): void {
+  while (map.size > limit) {
+    const oldest = map.keys().next();
+    if (oldest.done) return;
+    map.delete(oldest.value);
+  }
+}
 
 function lowerHeaders(headers: Record<string, unknown> | undefined): Record<string, string> {
   const out: Record<string, string> = {};
@@ -101,6 +117,11 @@ export class CdpNetworkCapture {
     return this.emitted;
   }
 
+  /** In-flight bookkeeping, exposed so the bound on it can be asserted. */
+  get inFlightCount(): { pending: number; extraHeaders: number } {
+    return { pending: this.pending.size, extraHeaders: this.extraRequestHeaders.size };
+  }
+
   async attach(cdp: CdpLike): Promise<void> {
     await cdp.send('Network.enable', {
       maxTotalBufferSize: 32 * 1024 * 1024,
@@ -118,12 +139,17 @@ export class CdpNetworkCapture {
         requestId,
         lowerHeaders(record.headers as Record<string, unknown> | undefined),
       );
+      evictOldest(this.extraRequestHeaders, MAX_PENDING_EXTRA_HEADERS);
     });
     cdp.on('Network.responseReceived', (payload: never) => {
       this.onResponseReceived(payload as unknown as Record<string, unknown>);
     });
     cdp.on('Network.loadingFinished', (payload: never) => {
-      void this.onLoadingFinished(cdp, payload as unknown as Record<string, unknown>);
+      // Fire-and-forget, so it must never reject: an unhandled rejection would
+      // take the whole capture session down over one lost observation.
+      void this.onLoadingFinished(cdp, payload as unknown as Record<string, unknown>).catch(
+        () => undefined,
+      );
     });
     cdp.on('Network.loadingFailed', (payload: never) => {
       this.onLoadingFailed(payload as unknown as Record<string, unknown>);
@@ -149,7 +175,13 @@ export class CdpNetworkCapture {
     const requestId = String(payload.requestId ?? '');
     const url = typeof request?.url === 'string' ? request.url : '';
     const resourceType = typeof payload.type === 'string' ? payload.type : undefined;
-    if (!requestId || !this.shouldCapture(url, resourceType)) return;
+    if (!requestId) return;
+    if (!this.shouldCapture(url, resourceType)) {
+      // Nothing will ever consume this request's side-channel headers, and they
+      // hold raw cookie values. Drop them as soon as we know.
+      this.extraRequestHeaders.delete(requestId);
+      return;
+    }
 
     const methodResult = httpMethodSchema.safeParse(String(request?.method ?? 'GET').toUpperCase());
     if (!methodResult.success) return;
@@ -168,6 +200,7 @@ export class CdpNetworkCapture {
       documentUrl: typeof payload.documentURL === 'string' ? payload.documentURL : undefined,
       resourceType,
     });
+    evictOldest(this.pending, MAX_PENDING_REQUESTS);
   }
 
   private onResponseReceived(payload: Record<string, unknown>): void {
@@ -217,7 +250,11 @@ export class CdpNetworkCapture {
       : undefined;
     const responseText = bodyResult?.base64Encoded === true ? undefined : bodyResult?.body;
 
-    this.emit(entry, postData, responseText);
+    try {
+      this.emit(entry, postData, responseText);
+    } catch {
+      // One malformed record is not worth ending the session over.
+    }
   }
 
   private mergeExtraHeaders(entry: PendingRequest): void {

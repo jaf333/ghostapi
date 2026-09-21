@@ -29,10 +29,39 @@ export interface PathTemplate {
   readonly segments: string[];
 }
 
+/**
+ * Words that end in "s" without being plural. Stripping the "s" here would name
+ * an operation `getStatu`, and that name ends up permanently in a published
+ * client and an MCP tool list.
+ */
+const NOT_PLURAL = new Set([
+  'status',
+  'bus',
+  'gas',
+  'campus',
+  'bonus',
+  'census',
+  'focus',
+  'news',
+  'series',
+  'species',
+  'analysis',
+  'basis',
+  'alias',
+  'canvas',
+  'kudos',
+  'access',
+  'address',
+  'progress',
+]);
+
 function singular(word: string): string {
+  const lower = word.toLowerCase();
+  if (NOT_PLURAL.has(lower)) return word;
   if (/ies$/i.test(word) && word.length > 4) return `${word.slice(0, -3)}y`;
   if (/(ses|xes|zes|ches|shes)$/i.test(word)) return word.slice(0, -2);
-  if (/s$/i.test(word) && !/ss$/i.test(word)) return word.slice(0, -1);
+  // "us" and "ss" endings are almost never plural markers.
+  if (/s$/i.test(word) && !/(ss|us|is)$/i.test(word)) return word.slice(0, -1);
   return word;
 }
 
