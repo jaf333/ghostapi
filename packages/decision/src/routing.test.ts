@@ -39,22 +39,48 @@ function operation(
 }
 
 const catalogue: Operation[] = [
-  operation('createTodo', 'create', 'todo', {
-    title: { type: 'string', examples: ['Buy milk'] },
-    priority: { type: 'string', enum: ['low', 'normal', 'high'], examples: ['normal'] },
-  }, ['title', 'priority']),
+  operation(
+    'createTodo',
+    'create',
+    'todo',
+    {
+      title: { type: 'string', examples: ['Buy milk'] },
+      priority: { type: 'string', enum: ['low', 'normal', 'high'], examples: ['normal'] },
+    },
+    ['title', 'priority'],
+  ),
   operation('listTodos', 'list', 'todo'),
   operation('searchTodos', 'search', 'todo', { query: { type: 'string' } }, ['query']),
-  operation('updateTodo', 'update', 'todo', {
-    todoId: { type: 'string', description: 'path parameter' },
-    title: { type: 'string' },
-  }, ['todoId', 'title']),
-  operation('archiveTodo', 'archive', 'todo', {
-    todoId: { type: 'string', description: 'path parameter' },
-  }, ['todoId'], true),
-  operation('deleteTodo', 'delete', 'todo', {
-    todoId: { type: 'string', description: 'path parameter' },
-  }, ['todoId'], true),
+  operation(
+    'updateTodo',
+    'update',
+    'todo',
+    {
+      todoId: { type: 'string', description: 'path parameter' },
+      title: { type: 'string' },
+    },
+    ['todoId', 'title'],
+  ),
+  operation(
+    'archiveTodo',
+    'archive',
+    'todo',
+    {
+      todoId: { type: 'string', description: 'path parameter' },
+    },
+    ['todoId'],
+    true,
+  ),
+  operation(
+    'deleteTodo',
+    'delete',
+    'todo',
+    {
+      todoId: { type: 'string', description: 'path parameter' },
+    },
+    ['todoId'],
+    true,
+  ),
   operation('listProjects', 'list', 'project'),
   operation('signIn', 'auth', 'session'),
 ];
@@ -91,7 +117,10 @@ describe('HeuristicDecisionEngine', () => {
       choices: catalogue.map((item) => item.name),
       instructions: 'pick one',
     });
-    const total = Object.values(decision.probabilities ?? {}).reduce((sum, value) => sum + value, 0);
+    const total = Object.values(decision.probabilities ?? {}).reduce(
+      (sum, value) => sum + value,
+      0,
+    );
     expect(total).toBeCloseTo(1, 5);
   });
 
@@ -167,7 +196,11 @@ describe('extractArguments', () => {
 
 describe('routeIntent', () => {
   it('returns the chosen operation with bound arguments', async () => {
-    const result = await routeIntent({ intent: 'create a todo called buy coffee', operations: catalogue, engine });
+    const result = await routeIntent({
+      intent: 'create a todo called buy coffee',
+      operations: catalogue,
+      engine,
+    });
     expect(result.operation.name).toBe('createTodo');
     expect(result.binding.inputs.title).toBe('buy coffee');
   });

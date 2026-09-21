@@ -27,7 +27,10 @@ function op(overrides: Record<string, unknown>): Operation {
     verb: 'create',
     inputs: {
       type: 'object',
-      properties: { title: { type: 'string' }, priority: { type: 'string', enum: ['low', 'high'] } },
+      properties: {
+        title: { type: 'string' },
+        priority: { type: 'string', enum: ['low', 'high'] },
+      },
       required: ['title'],
       additionalProperties: false,
     },
@@ -133,7 +136,14 @@ describe('Agent Skill frontmatter rules', () => {
     const frontmatter = content.split('---')[1] ?? '';
     const keys = [...frontmatter.matchAll(/^([a-z-]+):/gm)].map((match) => match[1]);
     for (const key of keys) {
-      expect(['name', 'description', 'license', 'compatibility', 'metadata', 'allowed-tools']).toContain(key);
+      expect([
+        'name',
+        'description',
+        'license',
+        'compatibility',
+        'metadata',
+        'allowed-tools',
+      ]).toContain(key);
     }
   });
 
@@ -167,7 +177,11 @@ describe('renderType', () => {
   });
 
   it('quotes a property name that is not an identifier', () => {
-    const rendered = renderType({ type: 'object', properties: { 'x-y': { type: 'string' } }, required: [] });
+    const rendered = renderType({
+      type: 'object',
+      properties: { 'x-y': { type: 'string' } },
+      required: [],
+    });
     expect(rendered).toContain("'x-y'?: string;");
   });
 });

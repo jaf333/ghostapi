@@ -16,10 +16,7 @@ export function RunPanel({
   destructive: boolean;
   sample: string;
 }) {
-  const [state, action, pending] = useActionState(
-    runOperation.bind(null, slug, name),
-    initial,
-  );
+  const [state, action, pending] = useActionState(runOperation.bind(null, slug, name), initial);
 
   if (destructive) {
     return (
@@ -36,7 +33,12 @@ export function RunPanel({
 
   return (
     <form action={action}>
-      <textarea name="input" defaultValue={sample} spellCheck={false} aria-label="Operation input" />
+      <textarea
+        name="input"
+        defaultValue={sample}
+        spellCheck={false}
+        aria-label="Operation input"
+      />
       <div className="row" style={{ marginTop: 10 }}>
         <button type="submit" disabled={pending}>
           {pending ? 'Running…' : 'Run'}

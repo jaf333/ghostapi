@@ -104,7 +104,9 @@ export interface DemoServerHandle {
   reset(): void;
 }
 
-export async function startDemoTarget(port = Number(process.env.PORT ?? 4123)): Promise<DemoServerHandle> {
+export async function startDemoTarget(
+  port = Number(process.env.PORT ?? 4123),
+): Promise<DemoServerHandle> {
   let db: Database = createDatabase();
 
   const server = createServer((request, response) => {
@@ -176,8 +178,7 @@ export async function startDemoTarget(port = Number(process.env.PORT ?? 4123)): 
 }
 
 const isMain =
-  process.argv[1] !== undefined &&
-  fileURLToPath(import.meta.url) === resolve(process.argv[1]);
+  process.argv[1] !== undefined && fileURLToPath(import.meta.url) === resolve(process.argv[1]);
 
 if (isMain) {
   const handle = await startDemoTarget();

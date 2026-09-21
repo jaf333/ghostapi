@@ -16,7 +16,11 @@ import {
 function typeLabel(schema: JsonSchema | undefined): string {
   if (!schema) return 'unknown';
   if (schema.enum) return schema.enum.map((value) => String(value)).join(' | ');
-  const types = Array.isArray(schema.type) ? schema.type : schema.type ? [schema.type] : ['unknown'];
+  const types = Array.isArray(schema.type)
+    ? schema.type
+    : schema.type
+      ? [schema.type]
+      : ['unknown'];
   const base = types.join(' | ');
   return schema.nullable ? `${base} | null` : base;
 }
@@ -32,7 +36,10 @@ export function describeInputs(operation: Operation): string[][] {
         key,
         typeLabel(schema),
         required.has(key) ? 'required' : style.gray('optional'),
-        schema?.format ?? (schema?.examples?.[0] !== undefined ? style.gray(`e.g. ${JSON.stringify(schema.examples[0])}`) : ''),
+        schema?.format ??
+          (schema?.examples?.[0] !== undefined
+            ? style.gray(`e.g. ${JSON.stringify(schema.examples[0])}`)
+            : ''),
       ];
     });
 }
@@ -125,9 +132,15 @@ export async function inspectCommand(argv: readonly string[]): Promise<void> {
     ['derived from', derivedFrom],
     ['observed', `${operation.observationCount} time(s)`],
     ['confidence', `${confidenceBar(operation.confidence)}  ${confidenceBand(operation)}`],
-    ['verified', operation.verified ? `${symbols.ok} replayed without the UI` : style.gray('not yet replayed')],
+    [
+      'verified',
+      operation.verified ? `${symbols.ok} replayed without the UI` : style.gray('not yet replayed'),
+    ],
     ['destructive', operation.destructive ? style.yellow('yes — requires --yes') : 'no'],
-    ['idempotent', operation.idempotent === undefined ? 'unknown' : operation.idempotent ? 'yes' : 'no'],
+    [
+      'idempotent',
+      operation.idempotent === undefined ? 'unknown' : operation.idempotent ? 'yes' : 'no',
+    ],
     ['auth', describeAuth(operation.auth)],
     [
       'transports',
@@ -139,7 +152,9 @@ export async function inspectCommand(argv: readonly string[]): Promise<void> {
     out();
     out(style.gray('UI triggers observed'));
     for (const trigger of operation.uiTriggers) {
-      out(`  ${symbols.bullet} ${trigger.kind} ${trigger.description} ${style.gray(`×${trigger.count}`)}`);
+      out(
+        `  ${symbols.bullet} ${trigger.kind} ${trigger.description} ${style.gray(`×${trigger.count}`)}`,
+      );
     }
   }
 
@@ -151,7 +166,12 @@ export async function inspectCommand(argv: readonly string[]): Promise<void> {
   } else {
     table(
       [{ header: '  name' }, { header: 'type' }, { header: '' }, { header: '' }],
-      inputs.map(([name, type, required, extra]) => [`  ${name}`, type ?? '', required ?? '', extra ?? '']),
+      inputs.map(([name, type, required, extra]) => [
+        `  ${name}`,
+        type ?? '',
+        required ?? '',
+        extra ?? '',
+      ]),
     );
   }
 
@@ -187,7 +207,9 @@ export async function targetsCommand(argv: readonly string[]): Promise<void> {
     targets.map(async (target) => {
       const operations = await store.listOperations(target.slug);
       return [
-        target.slug === config.defaultTarget ? `${symbols.arrow} ${style.bold(target.slug)}` : `  ${target.slug}`,
+        target.slug === config.defaultTarget
+          ? `${symbols.arrow} ${style.bold(target.slug)}`
+          : `  ${target.slug}`,
         target.origin,
         `${operations.length} op(s)`,
       ];

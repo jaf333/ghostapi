@@ -70,7 +70,9 @@ export default async function TargetPage({ params }: { params: Promise<{ slug: s
                   <Meter confidence={entry.operation.confidence} band={entry.band} />
                 </td>
                 <td>
-                  {entry.operation.destructive ? <span className="tag danger">destructive</span> : null}
+                  {entry.operation.destructive ? (
+                    <span className="tag danger">destructive</span>
+                  ) : null}
                   {entry.operation.verified ? <span className="tag ok">verified</span> : null}
                 </td>
               </tr>

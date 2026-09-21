@@ -13,12 +13,13 @@
     "test": "turbo run test",
     "test:unit": "turbo run test:unit",
     "typecheck": "turbo run typecheck",
-    "lint": "turbo run lint",
+    "lint": "prettier --check \"**/*.{ts,tsx,json,md}\"",
     "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,json,md}\"",
     "demo:target": "node apps/demo-target/dist/server.js",
     "ghostapi": "node packages/cli/dist/bin.js",
-    "e2e": "node scripts/e2e-vertical-slice.mjs"
+    "e2e": "node scripts/e2e-vertical-slice.mjs",
+    "verify": "node scripts/verify.mjs"
   },
   "devDependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",

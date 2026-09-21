@@ -1,0 +1,62 @@
+{
+  "generatedAt": "2026-09-21T18:52:13.833Z",
+  "generatedBy": "node scripts/measure-demo.mjs",
+  "environment": {
+    "node": "v22.23.2",
+    "platform": "darwin arm64"
+  },
+  "target": "apps/demo-target (the reference application in this repository)",
+  "discovery": {
+    "candidateGroups": 8,
+    "operations": 8,
+    "operationNames": [
+      "archiveTodo",
+      "createTodo",
+      "deleteTodo",
+      "getSession",
+      "listProjects",
+      "listTodos",
+      "signIn",
+      "updateTodo"
+    ],
+    "createTodoConfidence": 0.94,
+    "createTodoObservations": 5,
+    "createTodoInputs": ["priority", "projectId", "title"]
+  },
+  "run": {
+    "transport": "http",
+    "status": 201,
+    "latencyMs": 26
+  },
+  "ask": {
+    "engine": "heuristic",
+    "operation": "createTodo",
+    "confidence": 0.9,
+    "status": 201,
+    "latencyMs": 24
+  },
+  "benchmark": {
+    "runs": 5,
+    "browserMs": 7860,
+    "browserInteractions": 5,
+    "browserRequests": 33,
+    "browserTokens": "unavailable",
+    "apiMs": 68,
+    "apiRequests": 1,
+    "apiModelCalls": 0,
+    "apiTokens": 0,
+    "speedup": 115.6,
+    "notes": [
+      "The browser figure is a scripted replay of the recorded UI steps with no model in the loop. A real browser agent adds model latency and tokens on top, so this comparison understates the gap rather than inflating it.",
+      "Zero model calls on the GhostAPI path: `run` executes a typed operation directly."
+    ]
+  },
+  "evals": {
+    "operations": 8,
+    "cases": 12,
+    "passed": 7,
+    "failed": 0,
+    "skipped": 5,
+    "reliabilityPercent": 100
+  }
+}

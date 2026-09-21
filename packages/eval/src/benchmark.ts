@@ -2,7 +2,9 @@ import { ErrorCodes, GhostError, type BrowserTransport, type Operation } from '@
 import { executeOperation, type AuthMaterial, type BrowserRunner } from '@ghostapi/executor';
 
 /** A figure GhostAPI either measured or explicitly could not measure. */
-export type Measured<T> = { readonly measured: true; readonly value: T } | { readonly measured: false; readonly reason: string };
+export type Measured<T> =
+  | { readonly measured: true; readonly value: T }
+  | { readonly measured: false; readonly reason: string };
 
 export function measured<T>(value: T): Measured<T> {
   return { measured: true, value };
@@ -49,7 +51,9 @@ function browserTransportOf(operation: Operation): BrowserTransport | undefined 
   );
 }
 
-async function timeIt(fn: () => Promise<void>): Promise<{ ok: boolean; ms: number; error?: string }> {
+async function timeIt(
+  fn: () => Promise<void>,
+): Promise<{ ok: boolean; ms: number; error?: string }> {
   const startedAt = Date.now();
   try {
     await fn();
@@ -154,10 +158,7 @@ export async function benchmarkOperation(options: BenchmarkOptions): Promise<Ben
     interactions: measured(0),
     networkRequests: measured(1),
     modelCalls: measured(options.routingTokens === undefined ? 0 : 1),
-    tokens:
-      options.routingTokens === undefined
-        ? measured(0)
-        : measured(options.routingTokens),
+    tokens: options.routingTokens === undefined ? measured(0) : measured(options.routingTokens),
     ...(apiError ? { error: apiError } : {}),
   };
 
@@ -166,7 +167,11 @@ export async function benchmarkOperation(options: BenchmarkOptions): Promise<Ben
   }
 
   const speedup =
-    browser.durationMs.measured && api.durationMs.measured && api.durationMs.value > 0 && browser.ok && apiOk
+    browser.durationMs.measured &&
+    api.durationMs.measured &&
+    api.durationMs.value > 0 &&
+    browser.ok &&
+    apiOk
       ? browser.durationMs.value / api.durationMs.value
       : undefined;
 
@@ -179,7 +184,8 @@ export function requireBenchmarkable(operation: Operation): void {
       code: ErrorCodes.TransportUnsupported,
       title: 'Nothing to compare',
       detail: `${operation.name} only has a browser transport, so there is no API path to benchmark against.`,
-      remedy: 'Observe the application again so GhostAPI can derive an API transport for this action.',
+      remedy:
+        'Observe the application again so GhostAPI can derive an API transport for this action.',
     });
   }
 }

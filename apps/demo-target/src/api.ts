@@ -182,7 +182,10 @@ function updateTodo(db: Database, id: string, request: ApiRequest): ApiResponse 
   const next: Todo = {
     ...current,
     title: typeof payload.title === 'string' ? payload.title : current.title,
-    notes: payload.notes === null || typeof payload.notes === 'string' ? (payload.notes as string | null) : current.notes,
+    notes:
+      payload.notes === null || typeof payload.notes === 'string'
+        ? (payload.notes as string | null)
+        : current.notes,
     priority: (payload.priority as Priority | undefined) ?? current.priority,
     done: typeof payload.done === 'boolean' ? payload.done : current.done,
     updatedAt: new Date().toISOString(),

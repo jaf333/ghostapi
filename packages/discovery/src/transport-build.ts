@@ -93,7 +93,9 @@ export function buildQueryBinding(
   userControlledFields: readonly string[] = [],
 ): QueryBindingResult {
   const controlled = new Set(userControlledFields);
-  const keys = [...new Set(observations.flatMap((observation) => Object.keys(observation.query)))].sort();
+  const keys = [
+    ...new Set(observations.flatMap((observation) => Object.keys(observation.query))),
+  ].sort();
   const query: Record<string, ValueBinding> = {};
   const inputFields: string[] = [];
   for (const key of keys) {

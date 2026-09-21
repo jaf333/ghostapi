@@ -125,7 +125,11 @@ class PlaywrightSession implements BrowserSession {
     const shape = await locator.evaluate((element) => {
       const tag = element.tagName.toLowerCase();
       const type = element.getAttribute('type')?.toLowerCase() ?? '';
-      return tag === 'select' ? 'select' : type === 'checkbox' || type === 'radio' ? 'checkable' : 'text';
+      return tag === 'select'
+        ? 'select'
+        : type === 'checkbox' || type === 'radio'
+          ? 'checkable'
+          : 'text';
     });
     if (shape === 'select') {
       await locator.selectOption(value, { timeout: 10_000 });
@@ -183,8 +187,7 @@ export class PlaywrightDriver implements BrowserDriver {
         {
           code: ErrorCodes.BrowserUnavailable,
           title: 'Could not start Chrome',
-          detail:
-            error instanceof Error ? error.message : 'Playwright failed to launch a browser.',
+          detail: error instanceof Error ? error.message : 'Playwright failed to launch a browser.',
           remedy:
             'Run `ghostapi doctor` to check the browser setup. Install Google Chrome, or set `browserChannel` to "" in .ghostapi/config.json to use a Playwright-managed build.',
         },
@@ -209,12 +212,9 @@ export class PlaywrightDriver implements BrowserDriver {
     }
 
     await context.addInitScript(instrumentScript);
-    await context.exposeBinding(
-      INSTRUMENT_BINDING,
-      (source, raw: PageEvent) => {
-        this.handlePageEvent(options, redactor, source.page.url(), raw);
-      },
-    );
+    await context.exposeBinding(INSTRUMENT_BINDING, (source, raw: PageEvent) => {
+      this.handlePageEvent(options, redactor, source.page.url(), raw);
+    });
 
     const attach = async (page: Page): Promise<void> => {
       try {

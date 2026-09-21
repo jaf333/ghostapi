@@ -1,5 +1,13 @@
 import { join } from 'node:path';
-import { generateSuite, readSuites, runEvals, writeSuite, benchmarkOperation, requireBenchmarkable, type Measured } from '@ghostapi/eval';
+import {
+  generateSuite,
+  readSuites,
+  runEvals,
+  writeSuite,
+  benchmarkOperation,
+  requireBenchmarkable,
+  type Measured,
+} from '@ghostapi/eval';
 import { boolFlag, parse, parseJsonArgument, requirePositional, stringFlag } from '../args.js';
 import { authFor, openStore, startBrowserRunner } from '../context.js';
 import { emitJson, heading, keyValues, note, out, style, symbols, table } from '../ui.js';
@@ -64,7 +72,11 @@ export async function evalCommand(argv: readonly string[]): Promise<void> {
   out();
   for (const result of report.results) {
     const mark =
-      result.status === 'passed' ? symbols.ok : result.status === 'failed' ? symbols.fail : symbols.skip;
+      result.status === 'passed'
+        ? symbols.ok
+        : result.status === 'failed'
+          ? symbols.fail
+          : symbols.skip;
     const timing = result.latencyMs !== undefined ? style.gray(` ${result.latencyMs}ms`) : '';
     out(`  ${mark} ${result.name}${timing}`);
     if (result.reason) out(`      ${style.gray(result.reason)}`);
@@ -128,7 +140,14 @@ export async function benchmarkCommand(argv: readonly string[]): Promise<void> {
     out(style.gray(`${result.runs} run(s) per path`));
     out();
     table(
-      [{ header: 'path' }, { header: 'time', align: 'right' }, { header: 'interactions', align: 'right' }, { header: 'requests', align: 'right' }, { header: 'model calls', align: 'right' }, { header: 'tokens' }],
+      [
+        { header: 'path' },
+        { header: 'time', align: 'right' },
+        { header: 'interactions', align: 'right' },
+        { header: 'requests', align: 'right' },
+        { header: 'model calls', align: 'right' },
+        { header: 'tokens' },
+      ],
       [result.browser, result.api].map((path) => [
         path.ok ? path.label : `${path.label} ${style.red('(failed)')}`,
         path.durationMs.measured ? `${path.durationMs.value} ms` : style.gray('unavailable'),

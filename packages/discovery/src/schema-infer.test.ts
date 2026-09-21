@@ -4,11 +4,7 @@ import { inferSchema, mergeSchemas, pickProperties } from './schema-infer.js';
 
 describe('inferSchema', () => {
   it('marks a field optional only when a sample is missing it', () => {
-    const schema = inferSchema([
-      { title: 'a', notes: 'x' },
-      { title: 'b' },
-      { title: 'c' },
-    ]);
+    const schema = inferSchema([{ title: 'a', notes: 'x' }, { title: 'b' }, { title: 'c' }]);
     expect(schema.required).toEqual(['title']);
     expect(Object.keys(schema.properties ?? {}).sort()).toEqual(['notes', 'title']);
   });
@@ -50,10 +46,8 @@ describe('inferSchema', () => {
     expect(inferSchema(['2026-09-21T10:00:00Z', '2025-01-02T03:04:05Z']).format).toBe('date-time');
     expect(inferSchema(['a@b.com', 'c@d.org']).format).toBe('email');
     expect(
-      inferSchema([
-        '3f1a9e2b-1c2d-4e5f-8a9b-0c1d2e3f4a5b',
-        '4f1a9e2b-1c2d-4e5f-8a9b-0c1d2e3f4a5c',
-      ]).format,
+      inferSchema(['3f1a9e2b-1c2d-4e5f-8a9b-0c1d2e3f4a5b', '4f1a9e2b-1c2d-4e5f-8a9b-0c1d2e3f4a5c'])
+        .format,
     ).toBe('uuid');
   });
 
@@ -78,7 +72,11 @@ describe('inferSchema', () => {
   });
 
   it('keeps a redacted leaf typed without leaking it into an enum or example', () => {
-    const schema = inferSchema([{ password: REDACTED }, { password: REDACTED }, { password: REDACTED }]);
+    const schema = inferSchema([
+      { password: REDACTED },
+      { password: REDACTED },
+      { password: REDACTED },
+    ]);
     const child = schema.properties?.password;
     expect(child?.type).toBe('string');
     expect(child?.enum).toBeUndefined();

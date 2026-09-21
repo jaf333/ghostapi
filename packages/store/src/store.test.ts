@@ -52,7 +52,9 @@ describe('GhostStore', () => {
     const target = await store.createTarget({ url: 'https://app.example.com' });
     await store.saveOperation(target.slug, operation);
     expect(await store.readOperation(target.slug, 'createTodo')).toEqual(operation);
-    expect((await store.listOperations(target.slug)).map((item) => item.name)).toEqual(['createTodo']);
+    expect((await store.listOperations(target.slug)).map((item) => item.name)).toEqual([
+      'createTodo',
+    ]);
   });
 
   it('explains what is available when an operation is missing', async () => {
@@ -98,7 +100,11 @@ describe('GhostStore', () => {
 
   it('refuses a corrupt operation file rather than returning nonsense', async () => {
     const target = await store.createTarget({ url: 'https://app.example.com' });
-    await writeFile(join(store.paths.targetsDir, target.slug, 'operations', 'bad.json'), '{oops', 'utf8');
+    await writeFile(
+      join(store.paths.targetsDir, target.slug, 'operations', 'bad.json'),
+      '{oops',
+      'utf8',
+    );
     await expect(store.listOperations(target.slug)).rejects.toThrow(/valid JSON/i);
   });
 
@@ -109,14 +115,25 @@ describe('GhostStore', () => {
       origin: target.origin,
       updatedAt: 1,
       cookies: [
-        { name: 'sid', value: 'super-secret', domain: 'app.example.com', path: '/', expires: -1, httpOnly: true, secure: false },
+        {
+          name: 'sid',
+          value: 'super-secret',
+          domain: 'app.example.com',
+          path: '/',
+          expires: -1,
+          httpOnly: true,
+          secure: false,
+        },
       ],
     });
 
     const bundle = await store.exportBundle(target.slug, 'test');
     expect(JSON.stringify(bundle)).not.toContain('super-secret');
 
-    const targetFile = await readFile(join(store.paths.targetsDir, target.slug, 'target.json'), 'utf8');
+    const targetFile = await readFile(
+      join(store.paths.targetsDir, target.slug, 'target.json'),
+      'utf8',
+    );
     expect(targetFile).not.toContain('super-secret');
   });
 
@@ -128,7 +145,9 @@ describe('GhostStore', () => {
     const other = await freshStore();
     const result = await other.importBundle(bundle);
     expect(result.operations).toBe(1);
-    expect((await other.listOperations(result.slug)).map((item) => item.name)).toEqual(['createTodo']);
+    expect((await other.listOperations(result.slug)).map((item) => item.name)).toEqual([
+      'createTodo',
+    ]);
     expect(await other.readAuth(result.slug)).toBeUndefined();
   });
 

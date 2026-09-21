@@ -33,7 +33,9 @@ describe('inferOperations', () => {
     const fallback = operation?.fallbacks[0];
     if (fallback?.type === 'browser') {
       const click = fallback.steps.find((step) => step.action === 'click');
-      expect(click?.action === 'click' && click.selector).toBe('#create-form button[type="submit"]');
+      expect(click?.action === 'click' && click.selector).toBe(
+        '#create-form button[type="submit"]',
+      );
     }
   });
 
@@ -56,7 +58,11 @@ describe('inferOperations', () => {
     const result = inferOperations({
       target,
       observations: [
-        networkFixture({ path: '/analytics', url: 'https://app.example.com/analytics', status: 202 }),
+        networkFixture({
+          path: '/analytics',
+          url: 'https://app.example.com/analytics',
+          status: 202,
+        }),
       ],
     });
     expect(result.operations.map((operation) => operation.name)).not.toContain('createAnalytic');
@@ -141,7 +147,10 @@ describe('inferOperations', () => {
 
   it('preserves verification across re-derivation', () => {
     const first = inferOperations({ target, observations: [uiFixture(), networkFixture()] });
-    const verified = { ...(first.operations[0] as never), verified: true } as (typeof first.operations)[number];
+    const verified = {
+      ...(first.operations[0] as never),
+      verified: true,
+    } as (typeof first.operations)[number];
     const second = inferOperations({
       target,
       observations: [uiFixture(), networkFixture()],
@@ -158,7 +167,10 @@ describe('inferOperations', () => {
         networkFixture({
           path: '/api/data',
           url: 'https://app.example.com/api/data',
-          requestBody: { query: 'mutation createTag($name: String!) { createTag(name: $name) { id } }', variables: { name: 'bug' } },
+          requestBody: {
+            query: 'mutation createTag($name: String!) { createTag(name: $name) { id } }',
+            variables: { name: 'bug' },
+          },
           graphql: {
             query: 'mutation createTag($name: String!) { createTag(name: $name) { id } }',
             operationName: 'createTag',

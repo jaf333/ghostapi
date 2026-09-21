@@ -50,7 +50,9 @@ describe('generateSuite', () => {
   });
 
   it('never opts a destructive operation in by default', () => {
-    const suite = generateSuite(operation({ name: 'deleteTodo', verb: 'delete', destructive: true }));
+    const suite = generateSuite(
+      operation({ name: 'deleteTodo', verb: 'delete', destructive: true }),
+    );
     expect(suite.allowDestructive).toBe(false);
     expect(suite.cases[0]?.skip).toMatch(/destructive/);
   });
@@ -95,7 +97,11 @@ describe('runEvals', () => {
         evalSuiteSchema.parse({
           operation: 'listTodos',
           cases: [
-            { name: 'wrong total', input: { status: 'active' }, expect: { properties: { total: 99 } } },
+            {
+              name: 'wrong total',
+              input: { status: 'active' },
+              expect: { properties: { total: 99 } },
+            },
           ],
         }),
       ],

@@ -6,7 +6,8 @@ import { z } from 'zod';
  * a smaller surface is a smaller attack surface when a schema arrives from a
  * page we do not trust.
  */
-export type JsonSchemaType = 'object' | 'array' | 'string' | 'number' | 'integer' | 'boolean' | 'null';
+export type JsonSchemaType =
+  'object' | 'array' | 'string' | 'number' | 'integer' | 'boolean' | 'null';
 
 export interface JsonSchema {
   type?: JsonSchemaType | JsonSchemaType[];

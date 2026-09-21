@@ -49,7 +49,11 @@ export interface GraphQLTransport {
 export interface OperationLike {
   name: string;
   description: string;
-  inputs: { properties?: Record<string, unknown>; required?: string[]; additionalProperties?: boolean };
+  inputs: {
+    properties?: Record<string, unknown>;
+    required?: string[];
+    additionalProperties?: boolean;
+  };
   transport: HttpTransport | GraphQLTransport | { type: string };
   fallbacks?: ({ type: string } | HttpTransport | GraphQLTransport)[];
   auth: AuthStrategy;
@@ -108,10 +112,7 @@ export function fillUrlTemplate(
   return url;
 }
 
-function resolveAuthHeaders(
-  auth: AuthStrategy,
-  options: RuntimeOptions,
-): Record<string, string> {
+function resolveAuthHeaders(auth: AuthStrategy, options: RuntimeOptions): Record<string, string> {
   const env = options.env ?? (typeof process !== 'undefined' ? process.env : {});
   switch (auth.strategy) {
     case 'none':
@@ -203,12 +204,19 @@ export async function executeOperation(
         variables,
       }),
     });
-    const data = (await response.json().catch(() => null)) as { errors?: { message?: string }[] } | null;
+    const data = (await response.json().catch(() => null)) as {
+      errors?: { message?: string }[];
+    } | null;
     if (!response.ok) throw new Error(`${transport.endpoint} returned ${response.status}`);
     if (data?.errors?.length) {
       throw new Error(data.errors.map((error) => error.message ?? 'error').join('; '));
     }
-    return { status: response.status, data, latencyMs: Date.now() - startedAt, transport: 'graphql' };
+    return {
+      status: response.status,
+      data,
+      latencyMs: Date.now() - startedAt,
+      transport: 'graphql',
+    };
   }
 
   const url = new URL(fillUrlTemplate(transport.urlTemplate, transport.pathParams ?? [], inputs));

@@ -57,7 +57,10 @@ export interface BrowserSession {
   /** Cookies for the session's origin, used to authorize replayed HTTP calls. */
   cookies(): Promise<SessionCookie[]>;
   currentUrl(): Promise<string>;
-  runSteps(steps: readonly BrowserStep[], inputs: Record<string, unknown>): Promise<BrowserStepResult>;
+  runSteps(
+    steps: readonly BrowserStep[],
+    inputs: Record<string, unknown>,
+  ): Promise<BrowserStepResult>;
   /** Resolves when the user closes the browser window. */
   waitForClose(): Promise<void>;
   close(): Promise<void>;

@@ -17,9 +17,12 @@ describe('resolveAuth', () => {
   });
 
   it('builds a Cookie header from the stored session', () => {
-    const resolved = resolveAuth({ strategy: 'browser-session', cookieNames: [] }, {
-      cookies: [cookie(), cookie({ name: 'csrf', value: 'xyz' })],
-    });
+    const resolved = resolveAuth(
+      { strategy: 'browser-session', cookieNames: [] },
+      {
+        cookies: [cookie(), cookie({ name: 'csrf', value: 'xyz' })],
+      },
+    );
     expect(resolved.headers.cookie).toBe('sid=abc; csrf=xyz');
   });
 

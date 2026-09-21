@@ -5,8 +5,10 @@ const useColor =
   process.env.TERM !== 'dumb' &&
   process.stdout.isTTY === true;
 
-const wrap = (open: string, close: string) => (text: string): string =>
-  useColor ? `\u001b[${open}m${text}\u001b[${close}m` : text;
+const wrap =
+  (open: string, close: string) =>
+  (text: string): string =>
+    useColor ? `\u001b[${open}m${text}\u001b[${close}m` : text;
 
 export const style = {
   bold: wrap('1', '22'),

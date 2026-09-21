@@ -20,16 +20,7 @@ function token(): string {
 }
 
 export type IdPrefix =
-  | 'obs'
-  | 'ui'
-  | 'chg'
-  | 'op'
-  | 'sess'
-  | 'trace'
-  | 'span'
-  | 'ev'
-  | 'run'
-  | 'bench';
+  'obs' | 'ui' | 'chg' | 'op' | 'sess' | 'trace' | 'span' | 'ev' | 'run' | 'bench';
 
 export function newId(prefix: IdPrefix): string {
   return `${prefix}_${token()}`;

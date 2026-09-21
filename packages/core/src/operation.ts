@@ -94,7 +94,9 @@ export const CONFIDENCE_CANDIDATE = 0.45;
 
 export type ConfidenceBand = 'verified' | 'likely' | 'candidate' | 'weak';
 
-export function confidenceBand(operation: Pick<Operation, 'confidence' | 'verified'>): ConfidenceBand {
+export function confidenceBand(
+  operation: Pick<Operation, 'confidence' | 'verified'>,
+): ConfidenceBand {
   if (operation.verified) return 'verified';
   if (operation.confidence >= CONFIDENCE_VERIFIED) return 'verified';
   if (operation.confidence >= CONFIDENCE_LIKELY) return 'likely';

@@ -1,7 +1,10 @@
 import type { AuthStrategy, NetworkObservation } from '@ghostapi/core';
 
 function envNameFor(slug: string): string {
-  const normalized = slug.toUpperCase().replace(/[^A-Z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+  const normalized = slug
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '');
   return `GHOSTAPI_${normalized || 'TARGET'}_TOKEN`;
 }
 
@@ -30,7 +33,12 @@ export function inferAuth(
     ...originHeaderNames,
   ]);
   if (headerNames.has('authorization')) {
-    return { strategy: 'header', header: 'authorization', env: envNameFor(targetSlug), prefix: 'Bearer ' };
+    return {
+      strategy: 'header',
+      header: 'authorization',
+      env: envNameFor(targetSlug),
+      prefix: 'Bearer ',
+    };
   }
   for (const custom of ['x-api-key', 'x-auth-token', 'x-access-token', 'api-key']) {
     if (headerNames.has(custom)) {

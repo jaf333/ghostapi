@@ -2,7 +2,16 @@ import type { HttpMethod, OperationVerb } from '@ghostapi/core';
 import { singular, type PathTemplate } from './path-template.js';
 
 const SEARCH_PARAM_NAMES = ['q', 'query', 'search', 'term', 'filter', 'keyword'];
-const AUTH_ENTITIES = ['session', 'login', 'logout', 'signin', 'signout', 'signup', 'auth', 'token'];
+const AUTH_ENTITIES = [
+  'session',
+  'login',
+  'logout',
+  'signin',
+  'signout',
+  'signup',
+  'auth',
+  'token',
+];
 
 function pascal(value: string): string {
   return value
@@ -44,7 +53,9 @@ const isParam = (segment: string): boolean => segment.startsWith('{') && segment
  */
 export function analyzeEndpoint(template: PathTemplate): EndpointAnatomy {
   const segments = template.segments.filter((segment) => segment.length > 0);
-  const meaningful = segments.filter((segment) => !['api', 'v1', 'v2', 'v3', 'rest'].includes(segment));
+  const meaningful = segments.filter(
+    (segment) => !['api', 'v1', 'v2', 'v3', 'rest'].includes(segment),
+  );
   if (meaningful.length === 0) return { shape: 'root', entity: 'resource' };
 
   const last = meaningful[meaningful.length - 1] as string;
@@ -166,7 +177,9 @@ export function nameGraphqlOperation(
   operationType: 'query' | 'mutation',
   fallbackField: string | undefined,
 ): OperationName {
-  const base = camel(operationName ?? fallbackField ?? (operationType === 'query' ? 'query' : 'mutation'));
+  const base = camel(
+    operationName ?? fallbackField ?? (operationType === 'query' ? 'query' : 'mutation'),
+  );
   const match = GRAPHQL_VERB_PREFIXES.find((entry) => base.toLowerCase().startsWith(entry.prefix));
   const verb: OperationVerb = match?.verb ?? (operationType === 'query' ? 'read' : 'custom');
   const entity = match ? camel(base.slice(match.prefix.length)) || base : base;

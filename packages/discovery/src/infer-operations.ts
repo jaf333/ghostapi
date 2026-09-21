@@ -244,9 +244,7 @@ function buildOperation(input: BuildInput): Operation | undefined {
   const bodyFields = graphql ? [] : bodyBindingResult.inputFields;
 
   const queryBinding = buildQueryBinding(successes, controlled);
-  const querySchema = inferSchema(
-    successes.map((observation) => observation.query),
-  );
+  const querySchema = inferSchema(successes.map((observation) => observation.query));
 
   const responseSchema = inferSchema(
     successes.map((observation) => observation.responseBody).filter((body) => body !== undefined),
@@ -254,7 +252,9 @@ function buildOperation(input: BuildInput): Operation | undefined {
 
   const inputs = graphql
     ? inferSchema(
-        successes.map((observation) => observation.graphql?.variables).filter((v) => v !== undefined),
+        successes
+          .map((observation) => observation.graphql?.variables)
+          .filter((v) => v !== undefined),
       )
     : buildInputSchema({
         pathParams: template.params,
@@ -265,11 +265,12 @@ function buildOperation(input: BuildInput): Operation | undefined {
       });
 
   const transport = graphql
-    ? ({
+    ? {
         type: 'graphql' as const,
         endpoint: `${first.origin}${first.path}`,
         operationName: graphql.operationName,
-        operationType: graphql.operationType === 'mutation' ? ('mutation' as const) : ('query' as const),
+        operationType:
+          graphql.operationType === 'mutation' ? ('mutation' as const) : ('query' as const),
         document: graphql.query,
         variables: Object.fromEntries(
           Object.keys(inputs.properties ?? {}).map((field) => [
@@ -278,7 +279,7 @@ function buildOperation(input: BuildInput): Operation | undefined {
           ]),
         ),
         headers: { 'content-type': { kind: 'literal' as const, value: 'application/json' } },
-      })
+      }
     : buildHttpTransport({
         template,
         origin: first.origin,
@@ -295,14 +296,15 @@ function buildOperation(input: BuildInput): Operation | undefined {
   const payloadMatches = linked.reduce(
     (total, candidate) =>
       total +
-      (candidate.signals.find((signal) => signal.name === 'payloadSimilarity')?.strength ?? 0 > 0
+      ((candidate.signals.find((signal) => signal.name === 'payloadSimilarity')?.strength ?? 0 > 0)
         ? 1
         : 0),
     0,
   );
   const hasStateEvidence = linked.some(
     (candidate) =>
-      (candidate.signals.find((signal) => signal.name === 'stateChangeEvidence')?.strength ?? 0) > 0,
+      (candidate.signals.find((signal) => signal.name === 'stateChangeEvidence')?.strength ?? 0) >
+      0,
   );
 
   const previous = input.existing.find((operation) => operation.name === name);
@@ -311,8 +313,7 @@ function buildOperation(input: BuildInput): Operation | undefined {
     hasUiCorrelation: linked.length > 0,
     payloadMatches,
     hasStateEvidence,
-    typedRequestAndResponse:
-      first.requestBodyKind === 'json' || first.responseBodyKind === 'json',
+    typedRequestAndResponse: first.requestBodyKind === 'json' || first.responseBodyKind === 'json',
     verified: previous?.verified ?? false,
   });
 
@@ -327,7 +328,8 @@ function buildOperation(input: BuildInput): Operation | undefined {
       kind: 'ui',
       ref: candidate.interaction.id,
       note: `${candidate.interaction.type} on ${
-        sanitizePageText(candidate.interaction.label ?? candidate.interaction.selector ?? '', 40).text
+        sanitizePageText(candidate.interaction.label ?? candidate.interaction.selector ?? '', 40)
+          .text
       } (correlation ${candidate.score.toFixed(2)})`,
       at: candidate.interaction.at,
       score: candidate.score,

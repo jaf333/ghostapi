@@ -34,7 +34,9 @@ function printResult(result: ExecutionResult, extra: (readonly [string, string])
   ]);
   out();
   const rendered = JSON.stringify(result.data, null, 2) ?? 'null';
-  out(rendered.length > 2000 ? `${rendered.slice(0, 2000)}\n${style.gray('… truncated')}` : rendered);
+  out(
+    rendered.length > 2000 ? `${rendered.slice(0, 2000)}\n${style.gray('… truncated')}` : rendered,
+  );
   out();
 }
 
@@ -101,7 +103,9 @@ export async function askCommand(argv: readonly string[]): Promise<void> {
   const operations = await store.listOperations(target.slug);
   const config = await store.config();
 
-  const engineName = (stringFlag(parsed, 'engine') ?? config.decisionEngine ?? 'auto') as EngineName;
+  const engineName = (stringFlag(parsed, 'engine') ??
+    config.decisionEngine ??
+    'auto') as EngineName;
   const selection = await selectEngine(engineName);
 
   const route = await routeIntent({
@@ -121,7 +125,9 @@ export async function askCommand(argv: readonly string[]): Promise<void> {
       ['operation', style.bold(route.operation.name)],
       ['confidence', `${(route.decision.confidence * 100).toFixed(1)}%`],
       ['engine', route.decision.engine],
-      ...(route.decision.rationale ? ([['why', style.gray(route.decision.rationale)]] as const) : []),
+      ...(route.decision.rationale
+        ? ([['why', style.gray(route.decision.rationale)]] as const)
+        : []),
     ]);
     if (route.binding.bound.length > 0) {
       out();

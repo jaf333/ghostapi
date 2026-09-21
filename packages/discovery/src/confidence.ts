@@ -32,7 +32,10 @@ export function scoreConfidence(inputs: ConfidenceInputs): ConfidenceBreakdown {
   };
 
   const base = inputs.successfulObservations > 0 ? 0.4 : 0.2;
-  push(inputs.successfulObservations > 0 ? 'observed with a successful response' : 'observed', base);
+  push(
+    inputs.successfulObservations > 0 ? 'observed with a successful response' : 'observed',
+    base,
+  );
 
   const repetition = Math.min(0.2, 0.05 * Math.max(0, inputs.successfulObservations - 1));
   push(`observed ${inputs.successfulObservations} time(s)`, repetition);

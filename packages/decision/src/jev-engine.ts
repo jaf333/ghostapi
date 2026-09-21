@@ -1,4 +1,9 @@
-import { DecisionUnavailableError, type ChoiceRequest, type Decision, type DecisionEngine } from './engine.js';
+import {
+  DecisionUnavailableError,
+  type ChoiceRequest,
+  type Decision,
+  type DecisionEngine,
+} from './engine.js';
 
 interface ChoiceAnswer {
   readonly type: 'choice';
@@ -61,7 +66,10 @@ export class JevDecisionEngine implements DecisionEngine {
   private async load(): Promise<TypeSafeModule> {
     const module = (await import('@typesafe-ai/sdk')) as unknown as TypeSafeModule;
     if (!module?.TypeSafeClient || !module?.choice) {
-      throw new DecisionUnavailableError(this.name, '@typesafe-ai/sdk did not export the expected API');
+      throw new DecisionUnavailableError(
+        this.name,
+        '@typesafe-ai/sdk did not export the expected API',
+      );
     }
     return module;
   }

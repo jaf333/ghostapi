@@ -69,14 +69,24 @@ describe('demo target API', () => {
   });
 
   it('validates the input it advertises', async () => {
-    expect((await call('/api/todos', { method: 'POST', body: JSON.stringify({ title: '' }) })).status).toBe(400);
     expect(
-      (await call('/api/todos', { method: 'POST', body: JSON.stringify({ title: 'x', priority: 'urgent' }) }))
-        .status,
+      (await call('/api/todos', { method: 'POST', body: JSON.stringify({ title: '' }) })).status,
     ).toBe(400);
     expect(
-      (await call('/api/todos', { method: 'POST', body: JSON.stringify({ title: 'x', projectId: 'nope' }) }))
-        .status,
+      (
+        await call('/api/todos', {
+          method: 'POST',
+          body: JSON.stringify({ title: 'x', priority: 'urgent' }),
+        })
+      ).status,
+    ).toBe(400);
+    expect(
+      (
+        await call('/api/todos', {
+          method: 'POST',
+          body: JSON.stringify({ title: 'x', projectId: 'nope' }),
+        })
+      ).status,
     ).toBe(400);
   });
 
@@ -116,7 +126,9 @@ describe('demo target API', () => {
       method: 'POST',
       body: JSON.stringify({ query: 'query Projects { projects { id name } }' }),
     });
-    expect((result.body as { data: { projects: unknown[] } }).data.projects.length).toBeGreaterThan(0);
+    expect((result.body as { data: { projects: unknown[] } }).data.projects.length).toBeGreaterThan(
+      0,
+    );
   });
 
   it('serves the single-page app', async () => {

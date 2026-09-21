@@ -35,7 +35,14 @@ interface PendingRequest {
   responseMimeType?: string;
 }
 
-const CAPTURED_RESOURCE_TYPES = new Set(['XHR', 'Fetch', 'Document', 'Other', 'Ping', 'EventSource']);
+const CAPTURED_RESOURCE_TYPES = new Set([
+  'XHR',
+  'Fetch',
+  'Document',
+  'Other',
+  'Ping',
+  'EventSource',
+]);
 const MAX_STACK_FRAMES = 4;
 
 function lowerHeaders(headers: Record<string, unknown> | undefined): Record<string, string> {
@@ -49,7 +56,8 @@ function lowerHeaders(headers: Record<string, unknown> | undefined): Record<stri
 function toInitiator(raw: unknown): Initiator | undefined {
   if (typeof raw !== 'object' || raw === null) return undefined;
   const record = raw as Record<string, unknown>;
-  const stackRoot = record.stack as { callFrames?: { url?: string; functionName?: string }[] } | undefined;
+  const stackRoot = record.stack as
+    { callFrames?: { url?: string; functionName?: string }[] } | undefined;
   const frames = (stackRoot?.callFrames ?? [])
     .slice(0, MAX_STACK_FRAMES)
     .map((frame) => `${frame.functionName || '(anonymous)'} @ ${frame.url ?? '?'}`);
@@ -199,9 +207,13 @@ export class CdpNetworkCapture {
     // bloat every session with HTML that no operation is ever derived from.
     const wantsBody = entry.resourceType !== 'Document';
     const bodyResult = wantsBody
-      ? await this.safeSend<{ body?: string; base64Encoded?: boolean }>(cdp, 'Network.getResponseBody', {
-          requestId,
-        })
+      ? await this.safeSend<{ body?: string; base64Encoded?: boolean }>(
+          cdp,
+          'Network.getResponseBody',
+          {
+            requestId,
+          },
+        )
       : undefined;
     const responseText = bodyResult?.base64Encoded === true ? undefined : bodyResult?.body;
 

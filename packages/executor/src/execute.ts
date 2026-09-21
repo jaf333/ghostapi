@@ -23,7 +23,10 @@ import { fillUrlTemplate, resolveBinding } from './binding.js';
 import { cookiesForUrl, resolveAuth, type AuthMaterial } from './auth-context.js';
 
 export interface BrowserRunner {
-  run(transport: BrowserTransport, inputs: Record<string, unknown>): Promise<{
+  run(
+    transport: BrowserTransport,
+    inputs: Record<string, unknown>,
+  ): Promise<{
     extracted: Record<string, string>;
     finalUrl: string;
   }>;
@@ -261,7 +264,10 @@ async function runGraphql(
       remedy: `Run \`ghostapi inspect ${options.operation.name}\` to review the document and variables.`,
     });
   }
-  return { ...result, summary: `GraphQL ${transport.operationName ?? 'operation'} → ${transport.endpoint}` };
+  return {
+    ...result,
+    summary: `GraphQL ${transport.operationName ?? 'operation'} → ${transport.endpoint}`,
+  };
 }
 
 async function runBrowser(
@@ -273,7 +279,8 @@ async function runBrowser(
     throw new GhostError({
       code: ErrorCodes.TransportUnsupported,
       title: 'Browser fallback unavailable',
-      detail: 'This operation can only run through the browser, but no browser runner was provided.',
+      detail:
+        'This operation can only run through the browser, but no browser runner was provided.',
       remedy: 'Run this operation through the CLI, which can start a browser session.',
     });
   }
@@ -304,7 +311,8 @@ async function runTransport(
       throw new GhostError({
         code: ErrorCodes.TransportUnsupported,
         title: 'WebMCP transport not executable yet',
-        detail: 'GhostAPI records WebMCP tools during discovery but does not invoke them in this release.',
+        detail:
+          'GhostAPI records WebMCP tools during discovery but does not invoke them in this release.',
         remedy: 'Use the HTTP transport or the browser fallback for this operation.',
       });
   }

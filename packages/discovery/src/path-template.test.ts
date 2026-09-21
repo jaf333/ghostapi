@@ -34,13 +34,18 @@ describe('inferPathTemplate', () => {
   });
 
   it('handles an action after a parameter', () => {
-    const template = inferPathTemplate(['/api/todos/a1b2c3d4/archive', '/api/todos/e5f6a7b8/archive']);
+    const template = inferPathTemplate([
+      '/api/todos/a1b2c3d4/archive',
+      '/api/todos/e5f6a7b8/archive',
+    ]);
     expect(template.template).toBe('/api/todos/{todoId}/archive');
   });
 
   it('names parameters after the collection that precedes them', () => {
     expect(inferPathTemplate(['/api/projects/1', '/api/projects/2']).params).toEqual(['projectId']);
-    expect(inferPathTemplate(['/api/categories/1', '/api/categories/2']).params).toEqual(['categoryId']);
+    expect(inferPathTemplate(['/api/categories/1', '/api/categories/2']).params).toEqual([
+      'categoryId',
+    ]);
   });
 
   it('matches a concrete path back to its parameters', () => {

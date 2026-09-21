@@ -7,7 +7,9 @@ describe('resolveBinding', () => {
   });
 
   it('reads an input', () => {
-    expect(resolveBinding({ kind: 'input', field: 'title' }, { title: 'Buy milk' })).toBe('Buy milk');
+    expect(resolveBinding({ kind: 'input', field: 'title' }, { title: 'Buy milk' })).toBe(
+      'Buy milk',
+    );
   });
 
   it('omits absent optional inputs rather than sending null', () => {
@@ -39,7 +41,13 @@ describe('resolveBinding', () => {
         kind: 'object',
         properties: {
           user: { kind: 'object', properties: { id: { kind: 'input', field: 'id' } } },
-          tags: { kind: 'array', items: [{ kind: 'literal', value: 'a' }, { kind: 'input', field: 'tag' }] },
+          tags: {
+            kind: 'array',
+            items: [
+              { kind: 'literal', value: 'a' },
+              { kind: 'input', field: 'tag' },
+            ],
+          },
         },
       },
       { id: 7, tag: 'b' },
@@ -65,15 +73,21 @@ describe('fillUrlTemplate', () => {
 
   it('refuses to build a URL with a missing parameter', () => {
     expect(() => fillUrlTemplate('https://x/api/todos/{todoId}', ['todoId'], {})).toThrow(/todoId/);
-    expect(() => fillUrlTemplate('https://x/api/todos/{todoId}', ['todoId'], { todoId: '' })).toThrow();
+    expect(() =>
+      fillUrlTemplate('https://x/api/todos/{todoId}', ['todoId'], { todoId: '' }),
+    ).toThrow();
   });
 
   it('refuses to leave an unresolved placeholder in the URL', () => {
-    expect(() => fillUrlTemplate('https://x/api/{a}/{b}', ['a'], { a: '1' })).toThrow(/placeholder/i);
+    expect(() => fillUrlTemplate('https://x/api/{a}/{b}', ['a'], { a: '1' })).toThrow(
+      /placeholder/i,
+    );
   });
 
   it('blocks path traversal through a parameter value', () => {
-    const url = fillUrlTemplate('https://x/api/todos/{todoId}', ['todoId'], { todoId: '../../admin' });
+    const url = fillUrlTemplate('https://x/api/todos/{todoId}', ['todoId'], {
+      todoId: '../../admin',
+    });
     expect(url).toBe('https://x/api/todos/..%2F..%2Fadmin');
     expect(new URL(url).pathname).toBe('/api/todos/..%2F..%2Fadmin');
   });

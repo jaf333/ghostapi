@@ -42,7 +42,9 @@ describe('validateAgainstSchema', () => {
   });
 
   it('honours nullable', () => {
-    expect(validateAgainstSchema({ title: 'x', priority: 'low', notes: null }, schema).valid).toBe(true);
+    expect(validateAgainstSchema({ title: 'x', priority: 'low', notes: null }, schema).valid).toBe(
+      true,
+    );
     expect(validateAgainstSchema({ title: null, priority: 'low' }, schema).valid).toBe(false);
   });
 

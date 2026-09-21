@@ -130,7 +130,10 @@ export class SecretRedactor {
     return SENSITIVE_VALUE_PATTERNS.find((entry) => entry.pattern.test(value.trim()))?.name;
   }
 
-  redactHeaders(headers: Record<string, string>, basePath = 'headers'): RedactionResult<Record<string, string>> {
+  redactHeaders(
+    headers: Record<string, string>,
+    basePath = 'headers',
+  ): RedactionResult<Record<string, string>> {
     const redactions: RedactionRecord[] = [];
     const value: Record<string, string> = {};
     for (const [rawName, rawValue] of Object.entries(headers)) {
@@ -198,7 +201,11 @@ export class SecretRedactor {
         });
         parsed.searchParams.set(key, REDACTED);
       } else if (this.literalHit(current)) {
-        redactions.push({ path: `url.query.${key}`, reason: 'known-literal', originalType: 'string' });
+        redactions.push({
+          path: `url.query.${key}`,
+          reason: 'known-literal',
+          originalType: 'string',
+        });
         parsed.searchParams.set(key, REDACTED);
       }
     }
@@ -247,7 +254,12 @@ export class SecretRedactor {
     }
     if (Array.isArray(input)) {
       return input.map((item, index) =>
-        this.walk(item, path ? `${path}[${index}]` : `[${index}]`, redactions, parentKeyIsSensitive),
+        this.walk(
+          item,
+          path ? `${path}[${index}]` : `[${index}]`,
+          redactions,
+          parentKeyIsSensitive,
+        ),
       );
     }
     if (typeof input === 'object') {

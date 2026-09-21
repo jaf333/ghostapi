@@ -1,9 +1,17 @@
-import { DecisionUnavailableError, type ChoiceRequest, type Decision, type DecisionEngine } from './engine.js';
+import {
+  DecisionUnavailableError,
+  type ChoiceRequest,
+  type Decision,
+  type DecisionEngine,
+} from './engine.js';
 
 const GATEWAY_URL = 'https://ai-gateway.vercel.sh/v4/ai/evaluation-model';
 
 interface GatewayResponse {
-  answers?: Record<string, { type?: string; choice?: string; probabilities?: Record<string, number> }>;
+  answers?: Record<
+    string,
+    { type?: string; choice?: string; probabilities?: Record<string, number> }
+  >;
   usage?: { inputTokens?: number; outputTokens?: number };
   providerMetadata?: { typesafe?: { confidence?: Record<string, number> } };
 }

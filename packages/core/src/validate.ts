@@ -84,7 +84,9 @@ function walk(value: unknown, schema: JsonSchema, path: string, issues: Validati
 
   if (Array.isArray(value)) {
     if (schema.items) {
-      value.forEach((item, index) => walk(item, schema.items as JsonSchema, `${path}[${index}]`, issues));
+      value.forEach((item, index) =>
+        walk(item, schema.items as JsonSchema, `${path}[${index}]`, issues),
+      );
     }
     return;
   }

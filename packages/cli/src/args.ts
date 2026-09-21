@@ -59,7 +59,10 @@ export function requirePositional(parsed: Parsed, index: number, what: string): 
   return value;
 }
 
-export function parseJsonArgument(raw: string | undefined, what = 'input'): Record<string, unknown> {
+export function parseJsonArgument(
+  raw: string | undefined,
+  what = 'input',
+): Record<string, unknown> {
   if (raw === undefined || raw.trim().length === 0) return {};
   let parsed: unknown;
   try {

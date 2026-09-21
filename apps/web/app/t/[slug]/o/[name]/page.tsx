@@ -9,7 +9,11 @@ export const dynamic = 'force-dynamic';
 function typeLabel(schema: JsonSchema | undefined): string {
   if (!schema) return 'unknown';
   if (schema.enum) return schema.enum.map((value) => String(value)).join(' | ');
-  const types = Array.isArray(schema.type) ? schema.type : schema.type ? [schema.type] : ['unknown'];
+  const types = Array.isArray(schema.type)
+    ? schema.type
+    : schema.type
+      ? [schema.type]
+      : ['unknown'];
   return schema.nullable ? `${types.join(' | ')} | null` : types.join(' | ');
 }
 
@@ -70,7 +74,9 @@ export default async function OperationPage({
         <dt>destructive</dt>
         <dd>{operation.destructive ? <span className="tag danger">yes</span> : 'no'}</dd>
         <dt>idempotent</dt>
-        <dd>{operation.idempotent === undefined ? 'unknown' : operation.idempotent ? 'yes' : 'no'}</dd>
+        <dd>
+          {operation.idempotent === undefined ? 'unknown' : operation.idempotent ? 'yes' : 'no'}
+        </dd>
         <dt>auth</dt>
         <dd>{view.authLabel}</dd>
         <dt>transports</dt>
@@ -155,7 +161,9 @@ export default async function OperationPage({
             <tr key={`${item.kind}-${index}`}>
               <td className="mono faint">{item.kind}</td>
               <td className="muted">{item.note}</td>
-              <td className="num faint">{item.score !== undefined ? item.score.toFixed(2) : '—'}</td>
+              <td className="num faint">
+                {item.score !== undefined ? item.score.toFixed(2) : '—'}
+              </td>
             </tr>
           ))}
         </tbody>

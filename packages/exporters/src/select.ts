@@ -52,7 +52,10 @@ export function selectForExport(
       continue;
     }
     if (operation.transport.type === 'browser' && operation.fallbacks.length === 0) {
-      excluded.push({ name: operation.name, reason: 'browser-only; not replayable outside the CLI' });
+      excluded.push({
+        name: operation.name,
+        reason: 'browser-only; not replayable outside the CLI',
+      });
       continue;
     }
     selected.push(operation);

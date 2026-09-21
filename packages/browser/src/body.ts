@@ -64,8 +64,26 @@ export function detectGraphql(body: unknown): GraphqlEnvelope | undefined {
 }
 
 const STATIC_EXTENSIONS = [
-  '.js', '.mjs', '.css', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.avif',
-  '.ico', '.woff', '.woff2', '.ttf', '.otf', '.eot', '.map', '.mp4', '.webm', '.wasm',
+  '.js',
+  '.mjs',
+  '.css',
+  '.png',
+  '.jpg',
+  '.jpeg',
+  '.gif',
+  '.svg',
+  '.webp',
+  '.avif',
+  '.ico',
+  '.woff',
+  '.woff2',
+  '.ttf',
+  '.otf',
+  '.eot',
+  '.map',
+  '.mp4',
+  '.webm',
+  '.wasm',
 ];
 
 export function looksStatic(pathname: string): boolean {

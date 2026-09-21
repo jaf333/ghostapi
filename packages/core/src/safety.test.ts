@@ -59,7 +59,9 @@ describe('destructive classification', () => {
   });
 
   it('errs toward destructive on a suggestive name', () => {
-    expect(classifyDestructive({ verb: 'custom', method: 'POST', name: 'purgeWorkspace' })).toBe(true);
+    expect(classifyDestructive({ verb: 'custom', method: 'POST', name: 'purgeWorkspace' })).toBe(
+      true,
+    );
     expect(classifyDestructive({ verb: 'custom', method: 'POST', name: 'revokeToken' })).toBe(true);
   });
 
@@ -76,15 +78,21 @@ describe('destructive classification', () => {
 
 describe('confirmation gate', () => {
   it('requires confirmation for destructive operations', () => {
-    expect(requiresConfirmation({ name: 'deleteTodo', destructive: true }, { yes: false })).toBeDefined();
+    expect(
+      requiresConfirmation({ name: 'deleteTodo', destructive: true }, { yes: false }),
+    ).toBeDefined();
   });
 
   it('is satisfied by an explicit yes', () => {
-    expect(requiresConfirmation({ name: 'deleteTodo', destructive: true }, { yes: true })).toBeUndefined();
+    expect(
+      requiresConfirmation({ name: 'deleteTodo', destructive: true }, { yes: true }),
+    ).toBeUndefined();
   });
 
   it('never blocks a non-destructive operation', () => {
-    expect(requiresConfirmation({ name: 'listTodos', destructive: false }, { yes: false })).toBeUndefined();
+    expect(
+      requiresConfirmation({ name: 'listTodos', destructive: false }, { yes: false }),
+    ).toBeUndefined();
   });
 });
 

@@ -50,7 +50,9 @@ describe('detectGraphql', () => {
   });
 
   it('prefers an explicit operationName', () => {
-    expect(detectGraphql({ query: 'query { a }', operationName: 'Explicit' })?.operationName).toBe('Explicit');
+    expect(detectGraphql({ query: 'query { a }', operationName: 'Explicit' })?.operationName).toBe(
+      'Explicit',
+    );
   });
 
   it('ignores an ordinary body with a query field', () => {

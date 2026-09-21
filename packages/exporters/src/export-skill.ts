@@ -21,13 +21,17 @@ export interface SkillExportResult {
  * description containing an angle bracket is rejected outright — which matters
  * here because descriptions are generated from URLs and type names.
  */
-const ALLOWED_FRONTMATTER = ['name', 'description', 'license', 'compatibility', 'metadata', 'allowed-tools'];
+const ALLOWED_FRONTMATTER = [
+  'name',
+  'description',
+  'license',
+  'compatibility',
+  'metadata',
+  'allowed-tools',
+];
 
 export function sanitizeDescription(input: string, maxLength = 1024): string {
-  const cleaned = input
-    .replace(/[<>]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
+  const cleaned = input.replace(/[<>]/g, '').replace(/\s+/g, ' ').trim();
   return cleaned.length > maxLength ? `${cleaned.slice(0, maxLength - 1)}…` : cleaned;
 }
 
@@ -168,7 +172,9 @@ export async function exportSkill(options: SkillExportOptions): Promise<SkillExp
           .sort()
           .map((key) => {
             const schema = properties[key];
-            const type = Array.isArray(schema?.type) ? schema.type.join('|') : (schema?.type ?? 'unknown');
+            const type = Array.isArray(schema?.type)
+              ? schema.type.join('|')
+              : (schema?.type ?? 'unknown');
             const options = schema?.enum ? ` (${schema.enum.join(' | ')})` : '';
             return `| \`${key}\` | ${type}${options} | ${required.has(key) ? 'required' : 'optional'} |`;
           });

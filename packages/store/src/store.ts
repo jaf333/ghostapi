@@ -201,7 +201,9 @@ export class GhostStore {
       if ((error as NodeJS.ErrnoException).code === 'ENOENT') return [];
       throw error;
     }
-    const targets: (Target | undefined)[] = await Promise.all(entries.map((slug) => this.readTarget(slug)));
+    const targets: (Target | undefined)[] = await Promise.all(
+      entries.map((slug) => this.readTarget(slug)),
+    );
     return targets.filter((target): target is Target => target !== undefined);
   }
 
@@ -314,7 +316,9 @@ export class GhostStore {
 
   async listOperations(slug: string): Promise<Operation[]> {
     const files = await listJsonFiles(targetPaths(this.paths, slug).operationsDir);
-    const operations = await Promise.all(files.map((file) => readJsonIfExists(file, operationSchema)));
+    const operations = await Promise.all(
+      files.map((file) => readJsonIfExists(file, operationSchema)),
+    );
     return operations
       .filter((operation): operation is Operation => operation !== undefined)
       .sort((a, b) => a.name.localeCompare(b.name));

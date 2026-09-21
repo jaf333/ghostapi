@@ -38,7 +38,11 @@ export class TraceRecorder {
     this.labels[key] = value;
   }
 
-  async span<T>(name: string, fn: () => Promise<T>, data: Record<string, unknown> = {}): Promise<T> {
+  async span<T>(
+    name: string,
+    fn: () => Promise<T>,
+    data: Record<string, unknown> = {},
+  ): Promise<T> {
     const startedAt = Date.now();
     const id = newId('span');
     try {

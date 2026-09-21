@@ -58,7 +58,9 @@ export function inferPathTemplate(paths: readonly string[]): PathTemplate {
   const uniform = splits.every((parts) => parts.length === length);
   if (!uniform || length === 0) {
     const only = splits[0] ?? [];
-    return templateFrom(only.map((segment) => (looksLikeIdentifier(segment) ? undefined : segment)));
+    return templateFrom(
+      only.map((segment) => (looksLikeIdentifier(segment) ? undefined : segment)),
+    );
   }
 
   const segments: (string | undefined)[] = [];
@@ -89,7 +91,10 @@ function templateFrom(segments: readonly (string | undefined)[]): PathTemplate {
 }
 
 /** Extracts parameter values from a concrete path using a template. */
-export function matchPath(template: PathTemplate, path: string): Record<string, string> | undefined {
+export function matchPath(
+  template: PathTemplate,
+  path: string,
+): Record<string, string> | undefined {
   const actual = path.split('/').filter((part) => part.length > 0);
   const expected = template.segments;
   if (actual.length !== expected.length) return undefined;

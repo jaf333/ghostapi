@@ -22,7 +22,10 @@ describe('payloadSimilarity', () => {
   });
 
   it('scores zero when nothing the user typed reached the request', () => {
-    const result = payloadSimilarity(uiFixture(), networkFixture({ requestBody: { title: 'Other' } }));
+    const result = payloadSimilarity(
+      uiFixture(),
+      networkFixture({ requestBody: { title: 'Other' } }),
+    );
     expect(result.strength).toBe(0);
   });
 
@@ -59,7 +62,12 @@ describe('scoreCorrelation', () => {
 
   it('decays with distance in time', () => {
     const near = scoreCorrelation(uiFixture({ at: 950 }), networkFixture(), [], context);
-    const far = scoreCorrelation(uiFixture({ at: 0 }), networkFixture({ startedAt: 3_500 }), [], context);
+    const far = scoreCorrelation(
+      uiFixture({ at: 0 }),
+      networkFixture({ startedAt: 3_500 }),
+      [],
+      context,
+    );
     expect(near.score).toBeGreaterThan(far.score);
   });
 
@@ -130,7 +138,9 @@ describe('correlate', () => {
       context,
     });
     expect(result?.ambiguous).toBe(true);
-    expect((result?.best?.score ?? 0) - (result?.runnerUp?.score ?? 0)).toBeLessThan(AMBIGUITY_MARGIN);
+    expect((result?.best?.score ?? 0) - (result?.runnerUp?.score ?? 0)).toBeLessThan(
+      AMBIGUITY_MARGIN,
+    );
   });
 
   it('lets one interaction own several requests', () => {

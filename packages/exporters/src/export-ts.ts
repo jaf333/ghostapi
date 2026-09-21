@@ -49,7 +49,10 @@ export async function exportTypescript(options: TsExportOptions): Promise<TsExpo
 
   const typeLines = selection.selected.flatMap((operation) => {
     const name = assertSafeIdentifier(operation.name, 'operation name');
-    const lines = [`export interface ${inputTypeName(operation)} ${renderType(operation.inputs)}`, ''];
+    const lines = [
+      `export interface ${inputTypeName(operation)} ${renderType(operation.inputs)}`,
+      '',
+    ];
     if (operation.output && Object.keys(operation.output).length > 0) {
       lines.push(`export type ${outputTypeName(operation)} = ${renderType(operation.output)};`, '');
     } else {

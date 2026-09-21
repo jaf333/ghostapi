@@ -17,8 +17,21 @@ export interface ArgumentBinding {
 
 /** Fields that usually carry the free-text the user actually said. */
 const TEXT_FIELDS = [
-  'title', 'name', 'label', 'query', 'q', 'search', 'text', 'subject', 'content', 'body',
-  'message', 'description', 'summary', 'note', 'notes',
+  'title',
+  'name',
+  'label',
+  'query',
+  'q',
+  'search',
+  'text',
+  'subject',
+  'content',
+  'body',
+  'message',
+  'description',
+  'summary',
+  'note',
+  'notes',
 ];
 
 const PHRASE_PATTERNS: readonly RegExp[] = [
@@ -104,7 +117,12 @@ export function extractArguments(intent: string, operation: Operation): Argument
   for (const [field, fieldSchema] of Object.entries(properties)) {
     const explicitValue = explicit.get(field);
     if (explicitValue !== undefined) {
-      assign(field, coerce(fieldSchema, explicitValue), 'explicit', `read "${field}=" from the intent`);
+      assign(
+        field,
+        coerce(fieldSchema, explicitValue),
+        'explicit',
+        `read "${field}=" from the intent`,
+      );
       continue;
     }
     if (fieldSchema.enum) {
@@ -114,7 +132,12 @@ export function extractArguments(intent: string, operation: Operation): Argument
           new RegExp(`\\b${option.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(intent),
       );
       if (match !== undefined) {
-        assign(field, match, 'enum', `"${String(match)}" appears in the intent and is a valid value`);
+        assign(
+          field,
+          match,
+          'enum',
+          `"${String(match)}" appears in the intent and is a valid value`,
+        );
         continue;
       }
     }

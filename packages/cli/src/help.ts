@@ -9,7 +9,10 @@ const COMMANDS: readonly (readonly [string, string])[] = [
   ['inspect <operation>', 'show a single operation, its schema and its evidence'],
   ['run <operation> [json]', 'execute an operation without the UI'],
   ['ask "<intent>"', 'route natural language to an operation and run it'],
-  ['export mcp|skill|ts|target', 'emit an MCP server, an Agent Skill, a typed client or a portable target'],
+  [
+    'export mcp|skill|ts|target',
+    'emit an MCP server, an Agent Skill, a typed client or a portable target',
+  ],
   ['import <file>', 'import a target definition someone else exported'],
   ['eval', 'run reliability evals against the target'],
   ['benchmark <operation>', 'measure the browser path against the API path'],

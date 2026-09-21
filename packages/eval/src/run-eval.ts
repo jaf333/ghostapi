@@ -127,7 +127,11 @@ export async function runEvals(options: RunEvalOptions): Promise<EvalReport> {
         outcome = {
           ok: false,
           data: undefined,
-          error: isGhostError(error) ? error.detail : error instanceof Error ? error.message : String(error),
+          error: isGhostError(error)
+            ? error.detail
+            : error instanceof Error
+              ? error.message
+              : String(error),
         };
       }
       const failure = checkExpectation(testCase.expect, outcome);

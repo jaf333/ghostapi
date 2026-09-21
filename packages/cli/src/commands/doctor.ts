@@ -138,7 +138,12 @@ export async function doctorCommand(argv: readonly string[]): Promise<void> {
   out();
   const width = checks.reduce((max, check) => Math.max(max, check.name.length), 0);
   for (const check of checks) {
-    const mark = check.status === 'ok' ? symbols.ok : check.status === 'warn' ? style.yellow('!') : symbols.fail;
+    const mark =
+      check.status === 'ok'
+        ? symbols.ok
+        : check.status === 'warn'
+          ? style.yellow('!')
+          : symbols.fail;
     out(`  ${mark} ${style.gray(check.name.padEnd(width))}  ${check.detail}`);
     if (check.remedy) out(`      ${style.cyan(check.remedy)}`);
   }

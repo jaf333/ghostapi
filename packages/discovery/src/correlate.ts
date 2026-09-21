@@ -1,7 +1,17 @@
-import { REDACTED, type NetworkObservation, type StateChange, type UiInteraction } from '@ghostapi/core';
+import {
+  REDACTED,
+  type NetworkObservation,
+  type StateChange,
+  type UiInteraction,
+} from '@ghostapi/core';
 
 export interface CorrelationSignal {
-  readonly name: 'temporalProximity' | 'initiatorEvidence' | 'payloadSimilarity' | 'stateChangeEvidence' | 'repetitionEvidence';
+  readonly name:
+    | 'temporalProximity'
+    | 'initiatorEvidence'
+    | 'payloadSimilarity'
+    | 'stateChangeEvidence'
+    | 'repetitionEvidence';
   /** Normalised 0..1 strength of this individual signal. */
   readonly strength: number;
   readonly weight: number;
@@ -198,7 +208,9 @@ export interface CorrelateInput {
 export function correlate(input: CorrelateInput): Correlation[] {
   return input.network.map((observation) => {
     const candidates = input.interactions
-      .map((interaction) => scoreCorrelation(interaction, observation, input.changes, input.context))
+      .map((interaction) =>
+        scoreCorrelation(interaction, observation, input.changes, input.context),
+      )
       .filter((candidate) => candidate.score >= CORRELATION_THRESHOLD)
       .sort(compareCandidates);
 
@@ -209,7 +221,9 @@ export function correlate(input: CorrelateInput): Correlation[] {
       best,
       runnerUp,
       ambiguous:
-        best !== undefined && runnerUp !== undefined && best.score - runnerUp.score < AMBIGUITY_MARGIN,
+        best !== undefined &&
+        runnerUp !== undefined &&
+        best.score - runnerUp.score < AMBIGUITY_MARGIN,
     };
   });
 }

@@ -145,7 +145,10 @@ export interface SanitizedText {
 
 export function sanitizePageText(input: string, maxLength = 280): SanitizedText {
   const flagged = INJECTION_MARKERS.filter((pattern) => pattern.test(input)).map((p) => p.source);
-  const collapsed = input.replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim();
+  const collapsed = input
+    .replace(/[\u0000-\u001f\u007f]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
   const text = collapsed.length > maxLength ? `${collapsed.slice(0, maxLength)}…` : collapsed;
   return { text, flagged };
 }

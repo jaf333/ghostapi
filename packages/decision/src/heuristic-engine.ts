@@ -1,8 +1,31 @@
 import type { ChoiceRequest, Decision, DecisionEngine } from './engine.js';
 
 const STOP_WORDS = new Set([
-  'a', 'an', 'the', 'to', 'for', 'of', 'in', 'on', 'at', 'with', 'and', 'or', 'please',
-  'me', 'my', 'i', 'it', 'that', 'this', 'new', 'then', 'can', 'you', 'would', 'could',
+  'a',
+  'an',
+  'the',
+  'to',
+  'for',
+  'of',
+  'in',
+  'on',
+  'at',
+  'with',
+  'and',
+  'or',
+  'please',
+  'me',
+  'my',
+  'i',
+  'it',
+  'that',
+  'this',
+  'new',
+  'then',
+  'can',
+  'you',
+  'would',
+  'could',
 ]);
 
 export function tokenize(input: string): string[] {
@@ -59,7 +82,8 @@ export class HeuristicDecisionEngine implements DecisionEngine {
   }
 
   async choose<T extends string>(request: ChoiceRequest<T>): Promise<Decision<T>> {
-    const intentText = typeof request.state === 'string' ? request.state : JSON.stringify(request.state);
+    const intentText =
+      typeof request.state === 'string' ? request.state : JSON.stringify(request.state);
     const intentTokens = tokenize(intentText);
 
     const scored = request.choices.map((choice) => {

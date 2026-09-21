@@ -26,7 +26,10 @@ describe('SecretRedactor', () => {
       { user: { email: 'a@b.com', password: 'hunter2' }, items: [{ apiKey: 'zzz' }] },
       'requestBody',
     );
-    const value = result.value as { user: { email: string; password: string }; items: { apiKey: string }[] };
+    const value = result.value as {
+      user: { email: string; password: string };
+      items: { apiKey: string }[];
+    };
     expect(value.user.email).toBe('a@b.com');
     expect(value.user.password).toBe(REDACTED);
     expect(value.items[0]?.apiKey).toBe(REDACTED);
@@ -60,7 +63,9 @@ describe('SecretRedactor', () => {
     // detector has stopped detecting anything.
     const raw = JSON.stringify({ authorization: 'Bearer abc123def456' });
     expect(raw).toContain('abc123def456');
-    const redacted = JSON.stringify(defaultRedactor.redactHeaders({ authorization: 'Bearer abc123def456' }).value);
+    const redacted = JSON.stringify(
+      defaultRedactor.redactHeaders({ authorization: 'Bearer abc123def456' }).value,
+    );
     expect(redacted).not.toContain('abc123def456');
   });
 

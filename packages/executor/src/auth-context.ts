@@ -44,8 +44,10 @@ export function resolveAuth(strategy: AuthStrategy, material: AuthMaterial): Res
         throw new GhostError({
           code: ErrorCodes.AuthExpired,
           title: 'No browser session available',
-          detail: 'This operation replays a session that the browser established, but no session cookies are stored for this target.',
-          remedy: 'Run `ghostapi open <url>`, sign in, then close the window to capture the session.',
+          detail:
+            'This operation replays a session that the browser established, but no session cookies are stored for this target.',
+          remedy:
+            'Run `ghostapi open <url>`, sign in, then close the window to capture the session.',
         });
       }
       const soonest = cookies
