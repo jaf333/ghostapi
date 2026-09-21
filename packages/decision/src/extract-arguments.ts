@@ -23,6 +23,7 @@ const TEXT_FIELDS = [
 
 const PHRASE_PATTERNS: readonly RegExp[] = [
   /(?:called|named|titled|entitled)\s+(.+)$/i,
+  /(?:rename|retitle|set)\s+.*?\s+to\s+(.+)$/i,
   /(?:about|containing|matching|for)\s+(.+)$/i,
   /(?:to say|saying)\s+(.+)$/i,
 ];

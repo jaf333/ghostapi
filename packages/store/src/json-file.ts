@@ -74,8 +74,15 @@ export async function readNdjson<S extends z.ZodTypeAny>(
   for (const line of raw.split('\n')) {
     const trimmed = line.trim();
     if (trimmed.length === 0) continue;
-    const parsed = schema.safeParse(JSON.parse(trimmed));
-    // A single malformed line should not lose an entire capture session.
+    // A single malformed line — a half-written record after a crash, a record
+    // from an older schema — must not cost the whole capture session.
+    let value: unknown;
+    try {
+      value = JSON.parse(trimmed);
+    } catch {
+      continue;
+    }
+    const parsed = schema.safeParse(value);
     if (parsed.success) out.push(parsed.data);
   }
   return out;

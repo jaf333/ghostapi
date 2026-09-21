@@ -1,4 +1,5 @@
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
+import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { dirname, extname, join, normalize, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -6,7 +7,11 @@ import { handleApi, type ApiResponse } from './api.js';
 import { createDatabase, type Database } from './data.js';
 import { handleGraphql } from './graphql.js';
 
-const PUBLIC_DIR = join(dirname(fileURLToPath(import.meta.url)), 'public');
+// dist/public when built, ../public when running from source.
+const HERE = dirname(fileURLToPath(import.meta.url));
+const PUBLIC_DIR = existsSync(join(HERE, 'public'))
+  ? join(HERE, 'public')
+  : join(HERE, '..', 'public');
 const COOKIE_NAME = 'demo_session';
 const MAX_BODY_BYTES = 256 * 1024;
 

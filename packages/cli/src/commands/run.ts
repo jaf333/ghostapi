@@ -140,6 +140,18 @@ export async function askCommand(argv: readonly string[]): Promise<void> {
   }
 
   if (route.binding.missing.length > 0) {
+    if (json) {
+      emitJson({
+        intent,
+        decision: route.decision,
+        operation: route.operation.name,
+        inputs: route.binding.inputs,
+        missing: route.binding.missing,
+        executed: false,
+      });
+      process.exitCode = 1;
+      return;
+    }
     out();
     note(
       `Cannot run yet: missing ${route.binding.missing.join(', ')}. Provide them explicitly, for example:`,

@@ -65,6 +65,8 @@ export interface RunEvalOptions {
   readonly browser?: BrowserRunner;
   /** Runs cases marked `skip` anyway. */
   readonly force?: boolean;
+  /** Replaces the global fetch, so a suite can run against a stub. */
+  readonly fetchImpl?: typeof fetch;
 }
 
 /**
@@ -118,6 +120,7 @@ export async function runEvals(options: RunEvalOptions): Promise<EvalReport> {
           auth: options.auth,
           confirmed: true,
           browser: options.browser,
+          ...(options.fetchImpl ? { fetchImpl: options.fetchImpl } : {}),
         });
         outcome = { ok: execution.ok, data: execution.data };
       } catch (error) {

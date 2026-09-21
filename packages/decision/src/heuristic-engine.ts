@@ -94,12 +94,21 @@ export class HeuristicDecisionEngine implements DecisionEngine {
   }
 }
 
+/** Input names that mean an operation can answer a "find X" request. */
+const SEARCHABLE_INPUTS = /\b(query|q|search|term|keyword|filter)\b/i;
+
 function verbAffinity(intentTokens: readonly string[], choice: string, criteria: string): number {
   const stems = new Set(intentTokens.map(stem));
   let score = 0;
   for (const [verb, synonyms] of Object.entries(VERB_SYNONYMS)) {
+    const lowerCriteria = criteria.toLowerCase();
+    // An operation can serve a verb either by being named for it, or by taking
+    // the input that verb needs. Plenty of applications have no dedicated
+    // search endpoint — they have a list endpoint that accepts a query.
     const mentionsVerb =
-      choice.toLowerCase().startsWith(verb) || criteria.toLowerCase().includes(`"${verb}"`);
+      choice.toLowerCase().startsWith(verb) ||
+      lowerCriteria.includes(`"${verb}"`) ||
+      (verb === 'search' && SEARCHABLE_INPUTS.test(criteria));
     if (!mentionsVerb) continue;
     if (synonyms.some((synonym) => stems.has(stem(synonym)))) score += 1.5;
   }

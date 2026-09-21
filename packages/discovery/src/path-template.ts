@@ -1,5 +1,9 @@
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const PREFIXED_ID = /^[a-z][a-z0-9]{1,12}[_-][A-Za-z0-9]{4,}$/;
+/**
+ * `todo_9ab12c`, `usr-42`. The suffix must contain a digit, otherwise a
+ * perfectly ordinary route like `user_profile` would be read as an id.
+ */
+const PREFIXED_ID = /^[a-z][a-z0-9]{1,12}[_-](?=[A-Za-z0-9]*\d)[A-Za-z0-9]{1,}$/;
 const NUMERIC = /^\d+$/;
 const HEX = /^[0-9a-f]{16,}$/i;
 const BASE62 = /^[A-Za-z0-9_-]{16,}$/;

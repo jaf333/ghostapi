@@ -6,9 +6,29 @@
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "exports": { ".": { "types": "./dist/index.d.ts", "default": "./dist/index.js" } },
-  "files": ["dist", "templates"],
-  "scripts": { "build": "tsc -b && node scripts/copy-templates.mjs", "typecheck": "tsc -b", "test:unit": "vitest run", "test": "vitest run" },
-  "dependencies": { "@ghostapi/core": "workspace:*" },
-  "devDependencies": { "typescript": "^5.7.2", "vitest": "^2.1.8", "@types/node": "^22.10.2" }
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "templates"
+  ],
+  "scripts": {
+    "build": "tsc -b && node scripts/copy-templates.mjs",
+    "typecheck": "tsc -b",
+    "test:unit": "vitest run",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@ghostapi/core": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8",
+    "@types/node": "^22.10.2",
+    "@ghostapi/executor": "workspace:*"
+  }
 }

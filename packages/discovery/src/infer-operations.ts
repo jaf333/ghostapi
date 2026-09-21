@@ -7,6 +7,7 @@ import {
   newId,
   operationSchema,
   sanitizePageText,
+  shouldIgnorePath,
   type Evidence,
   type NetworkObservation,
   type Observation,
@@ -120,7 +121,11 @@ function mergeTriggers(triggers: readonly UiTrigger[]): UiTrigger[] {
  */
 export function inferOperations(options: DiscoveryOptions): DiscoveryResult {
   const { network, interactions, changes } = splitObservations(options.observations);
-  const apiLike = network.filter(isApiLike);
+  // Filter here as well as during capture: stored sessions may predate a
+  // change to the ignore list, and an imported set was captured elsewhere.
+  const apiLike = network
+    .filter((observation) => !shouldIgnorePath(observation.path, options.target.ignorePatterns))
+    .filter(isApiLike);
 
   const repetitionByEndpoint = new Map<string, number>();
   for (const observation of apiLike) {
