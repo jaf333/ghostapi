@@ -99,19 +99,37 @@ export async function openCommand(argv: readonly string[]): Promise<void> {
   const scriptFile = stringFlag(parsed, 'script');
   const durationSeconds = Number(stringFlag(parsed, 'duration') ?? '0');
 
+  // Ctrl-C ends the session the same way closing the window does: the browser
+  // is closed and everything observed so far is still saved and compiled.
+  // Without this, an interrupted session loses its evidence and leaves an
+  // orphaned Chrome behind.
+  let onInterrupt: (() => void) | undefined;
+  const interrupted = new Promise<void>((resolve) => {
+    onInterrupt = () => {
+      if (!json) {
+        out();
+        note('Interrupted — closing the browser and keeping what was observed.');
+      }
+      resolve();
+    };
+    process.once('SIGINT', onInterrupt);
+    process.once('SIGTERM', onInterrupt);
+  });
+
   try {
     if (scriptFile) {
       const steps = await readScript(scriptFile);
-      await session.runSteps(steps, {});
+      await Promise.race([session.runSteps(steps, {}), interrupted]);
       // Let trailing requests and mutations land before the window closes.
       await new Promise((resolve) => setTimeout(resolve, 800));
     } else if (durationSeconds > 0) {
       await Promise.race([
         session.waitForClose(),
+        interrupted,
         new Promise((resolve) => setTimeout(resolve, durationSeconds * 1000)),
       ]);
     } else {
-      await session.waitForClose();
+      await Promise.race([session.waitForClose(), interrupted]);
     }
 
     const cookies = await session.cookies().catch(() => []);
@@ -123,6 +141,10 @@ export async function openCommand(argv: readonly string[]): Promise<void> {
       });
     }
   } finally {
+    if (onInterrupt) {
+      process.removeListener('SIGINT', onInterrupt);
+      process.removeListener('SIGTERM', onInterrupt);
+    }
     await session.close().catch(() => undefined);
   }
 
