@@ -1,0 +1,14 @@
+{
+  "name": "@ghostapi/browser",
+  "version": "0.1.0",
+  "description": "Real-browser session driver and CDP network/UI capture for GhostAPI.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "default": "./dist/index.js" } },
+  "files": ["dist"],
+  "scripts": { "build": "tsc -b", "typecheck": "tsc -b", "test:unit": "vitest run", "test": "vitest run" },
+  "dependencies": { "@ghostapi/core": "workspace:*", "playwright-core": "^1.49.1" },
+  "devDependencies": { "typescript": "^5.7.2", "vitest": "^2.1.8", "@types/node": "^22.10.2" }
+}

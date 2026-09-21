@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.next/
+.turbo/
+*.tsbuildinfo
+
+# GhostAPI local state: contains observed traffic and browser profiles.
+# Never commit. May contain session material even after redaction.
+.ghostapi/
+.ghostapi-*/
+out/
+coverage/
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example

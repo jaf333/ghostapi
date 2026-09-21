@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tasklet — demo target</title>
+    <link rel="stylesheet" href="/app.css" />
+  </head>
+  <body>
+    <main id="app">
+      <section id="login-view" hidden>
+        <h1>Tasklet</h1>
+        <p class="muted">Sign in to continue.</p>
+        <form id="login-form">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="username" value="demo@ghostapi.dev" required />
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" value="ghost" required />
+          <button type="submit">Sign in</button>
+          <p class="error" id="login-error" hidden></p>
+        </form>
+      </section>
+
+      <section id="app-view" hidden>
+        <header>
+          <h1>Tasklet</h1>
+          <div class="header-actions">
+            <span id="who" class="muted"></span>
+            <button id="logout" type="button" class="ghost">Sign out</button>
+          </div>
+        </header>
+
+        <form id="create-form">
+          <input id="new-title" name="title" type="text" placeholder="What needs doing?" required />
+          <select id="new-project" name="projectId"></select>
+          <select id="new-priority" name="priority">
+            <option value="low">low</option>
+            <option value="normal" selected>normal</option>
+            <option value="high">high</option>
+          </select>
+          <button type="submit">Create</button>
+        </form>
+
+        <form id="search-form" role="search">
+          <input id="search-input" name="query" type="search" placeholder="Search todos" />
+          <select id="status-filter" name="status">
+            <option value="active" selected>active</option>
+            <option value="archived">archived</option>
+            <option value="all">all</option>
+          </select>
+          <button type="submit">Search</button>
+        </form>
+
+        <ul id="todo-list"></ul>
+        <p id="empty" class="muted" hidden>No todos match.</p>
+      </section>
+    </main>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

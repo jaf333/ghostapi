@@ -1,0 +1,28 @@
+{
+  "name": "ghostapi-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Turn web apps into agent-native operations.",
+  "license": "MIT",
+  "packageManager": "pnpm@10.27.0",
+  "engines": { "node": ">=20.11" },
+  "scripts": {
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "test:unit": "turbo run test:unit",
+    "typecheck": "turbo run typecheck",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,json,md}\"",
+    "demo:target": "node apps/demo-target/dist/server.js",
+    "ghostapi": "node packages/cli/dist/bin.js",
+    "e2e": "node scripts/e2e-vertical-slice.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "prettier": "^3.4.2",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

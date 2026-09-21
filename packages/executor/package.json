@@ -1,0 +1,14 @@
+{
+  "name": "@ghostapi/executor",
+  "version": "0.1.0",
+  "description": "Executes normalized GhostAPI operations over HTTP, GraphQL or the browser.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "default": "./dist/index.js" } },
+  "files": ["dist"],
+  "scripts": { "build": "tsc -b", "typecheck": "tsc -b", "test:unit": "vitest run", "test": "vitest run" },
+  "dependencies": { "@ghostapi/core": "workspace:*" },
+  "devDependencies": { "typescript": "^5.7.2", "vitest": "^2.1.8", "@types/node": "^22.10.2" }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "@ghostapi/demo-target",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Reference target application: a small, real todo app with session auth, a REST API and a GraphQL endpoint.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/server.js",
+  "scripts": {
+    "build": "tsc -b && node scripts/copy-public.mjs",
+    "start": "node dist/server.js",
+    "dev": "node --watch dist/server.js",
+    "typecheck": "tsc -b"
+  },
+  "devDependencies": { "typescript": "^5.7.2", "@types/node": "^22.10.2" }
+}
