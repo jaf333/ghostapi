@@ -97,6 +97,14 @@ async function serveStatic(pathname: string, response: ServerResponse): Promise<
   }
 }
 
+/** A start failure a person can act on, rather than a Node stack trace. */
+export class PortInUseError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'PortInUseError';
+  }
+}
+
 export interface DemoServerHandle {
   readonly url: string;
   readonly port: number;
@@ -157,7 +165,22 @@ export async function startDemoTarget(
   });
 
   await new Promise<void>((resolve, reject) => {
-    server.once('error', reject);
+    server.once('error', (error: NodeJS.ErrnoException) => {
+      if (error.code === 'EADDRINUSE') {
+        // A stack trace does not tell anyone what to do about a busy port.
+        reject(
+          new PortInUseError(
+            `Port ${port} is already in use, so the demo target cannot start.\n\n` +
+              `Something is already listening there — very likely an earlier demo target.\n\n` +
+              `Find it:\n  lsof -nP -iTCP:${port} -sTCP:LISTEN\n\n` +
+              `Stop it, or start this one on a different port:\n  PORT=4124 node apps/demo-target/dist/server.js\n\n` +
+              `PORT=0 picks any free port and prints it.`,
+          ),
+        );
+        return;
+      }
+      reject(error);
+    });
     server.listen(port, '127.0.0.1', resolve);
   });
 
@@ -184,7 +207,13 @@ const isMain =
   process.argv[1] !== undefined && fileURLToPath(import.meta.url) === resolve(process.argv[1]);
 
 if (isMain) {
-  const handle = await startDemoTarget();
+  const handle = await startDemoTarget().catch((error: unknown) => {
+    if (error instanceof PortInUseError) {
+      process.stderr.write(`\n${error.message}\n\n`);
+      process.exit(1);
+    }
+    throw error;
+  });
   process.stdout.write(`demo-target listening on ${handle.url}\n`);
   const shutdown = () => {
     // Exit even if a connection refuses to drain: a demo server that ignores
