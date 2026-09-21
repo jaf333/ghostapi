@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { endpointKey, inferPathTemplate, looksLikeIdentifier, matchPath } from './path-template.js';
+import { inferPathTemplate, looksLikeIdentifier } from './path-template.js';
 import { pathSkeleton } from './group.js';
 
 describe('looksLikeIdentifier', () => {
@@ -47,13 +47,6 @@ describe('inferPathTemplate', () => {
       'categoryId',
     ]);
   });
-
-  it('matches a concrete path back to its parameters', () => {
-    const template = inferPathTemplate(['/api/todos/abc', '/api/todos/def']);
-    expect(matchPath(template, '/api/todos/xyz')).toEqual({ todoId: 'xyz' });
-    expect(matchPath(template, '/api/projects/xyz')).toBeUndefined();
-    expect(matchPath(template, '/api/todos/xyz/extra')).toBeUndefined();
-  });
 });
 
 describe('pathSkeleton', () => {
@@ -63,14 +56,6 @@ describe('pathSkeleton', () => {
 
   it('keeps different routes apart', () => {
     expect(pathSkeleton('/api/todos')).not.toBe(pathSkeleton('/api/projects'));
-  });
-});
-
-describe('endpointKey', () => {
-  it('separates methods on the same path', () => {
-    expect(endpointKey('GET', '/api/todos', 'https://x')).not.toBe(
-      endpointKey('POST', '/api/todos', 'https://x'),
-    );
   });
 });
 

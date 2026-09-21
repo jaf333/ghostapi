@@ -48,23 +48,3 @@ export const jsonSchemaSchema: z.ZodType<JsonSchema> = z.lazy(() =>
     })
     .strict(),
 );
-
-export const emptyObjectSchema: JsonSchema = {
-  type: 'object',
-  properties: {},
-  required: [],
-  additionalProperties: false,
-};
-
-export function isObjectSchema(schema: JsonSchema): boolean {
-  return schema.type === 'object' || (Array.isArray(schema.type) && schema.type.includes('object'));
-}
-
-/** Property names of an object schema, in a stable order. */
-export function schemaPropertyNames(schema: JsonSchema): string[] {
-  return Object.keys(schema.properties ?? {}).sort();
-}
-
-export function isRequired(schema: JsonSchema, property: string): boolean {
-  return (schema.required ?? []).includes(property);
-}

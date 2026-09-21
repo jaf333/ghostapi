@@ -106,3 +106,20 @@ describe('network observation', () => {
     expect(parsed.requestBodyKind).toBe('none');
   });
 });
+
+describe('transportChain', () => {
+  const browser = { type: 'browser', startUrl: 'https://example.com', steps: [] };
+  const http = operation.transport;
+
+  it('tries the API before the browser regardless of storage order', async () => {
+    const { transportChain } = await import('./operation.js');
+    const parsed = operationSchema.parse({ ...operation, transport: http, fallbacks: [browser] });
+    expect(transportChain(parsed).map((item) => item.type)).toEqual(['http', 'browser']);
+  });
+
+  it('reorders a browser-first operation that arrived from elsewhere', async () => {
+    const { transportChain } = await import('./operation.js');
+    const parsed = operationSchema.parse({ ...operation, transport: browser, fallbacks: [http] });
+    expect(transportChain(parsed).map((item) => item.type)).toEqual(['http', 'browser']);
+  });
+});

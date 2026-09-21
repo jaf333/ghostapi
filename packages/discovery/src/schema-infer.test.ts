@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { REDACTED } from '@ghostapi/core';
-import { inferSchema, mergeSchemas, pickProperties } from './schema-infer.js';
+import { inferSchema, pickProperties } from './schema-infer.js';
 
 describe('inferSchema', () => {
   it('marks a field optional only when a sample is missing it', () => {
@@ -85,22 +85,6 @@ describe('inferSchema', () => {
 
   it('returns an empty schema when it has seen nothing', () => {
     expect(inferSchema([])).toEqual({});
-  });
-});
-
-describe('mergeSchemas', () => {
-  it('keeps a field required only if both sides required it', () => {
-    const a = inferSchema([{ x: 1, y: 2 }]);
-    const b = inferSchema([{ x: 1 }]);
-    expect(mergeSchemas(a, b).required).toEqual(['x']);
-  });
-
-  it('unions enum members', () => {
-    const merged = mergeSchemas(
-      { type: 'string', enum: ['a', 'b'] },
-      { type: 'string', enum: ['b', 'c'] },
-    );
-    expect(merged.enum).toEqual(['a', 'b', 'c']);
   });
 });
 

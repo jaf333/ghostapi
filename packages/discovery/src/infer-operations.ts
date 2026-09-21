@@ -8,6 +8,7 @@ import {
   operationSchema,
   sanitizePageText,
   shouldIgnorePath,
+  transportInputFields,
   type Evidence,
   type NetworkObservation,
   type Observation,
@@ -380,7 +381,16 @@ function buildOperation(input: BuildInput): Operation | undefined {
     updatedAt: now,
   });
 
-  return parsed.success ? parsed.data : undefined;
+  if (!parsed.success) return undefined;
+
+  // An operation whose transport reads a field the schema never declares would
+  // validate a caller's input and then send something else. Refuse it rather
+  // than ship it.
+  const declared = new Set(Object.keys(parsed.data.inputs.properties ?? {}));
+  const bound = transportInputFields(parsed.data.transport);
+  if (bound.some((field) => !declared.has(field))) return undefined;
+
+  return parsed.data;
 }
 
 function describeOperation(

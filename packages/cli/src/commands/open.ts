@@ -9,8 +9,6 @@ import {
   type Session,
 } from '@ghostapi/core';
 import { PlaywrightDriver, type CaptureSink } from '@ghostapi/browser';
-import { inferOperations } from '@ghostapi/discovery';
-import type { GhostStore } from '@ghostapi/store';
 import { boolFlag, parse, requirePositional, stringFlag, type Parsed } from '../args.js';
 import { openStore } from '../context.js';
 import { emitJson, heading, keyValues, note, out, step, style, symbols } from '../ui.js';
@@ -199,15 +197,4 @@ export async function openCommand(argv: readonly string[]): Promise<void> {
   note(`Next:  ghostapi inspect ${suggestion?.name ?? '<operation>'}`);
   note(`       ghostapi ask "…"`);
   out();
-}
-
-export async function saveDiscovered(
-  store: GhostStore,
-  slug: string,
-  observations: readonly Observation[],
-): Promise<void> {
-  const target = await store.requireTarget(slug);
-  const existing = await store.listOperations(slug);
-  const result = inferOperations({ target, observations, existing });
-  for (const operation of result.operations) await store.saveOperation(slug, operation);
 }

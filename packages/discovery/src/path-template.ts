@@ -119,30 +119,4 @@ function templateFrom(segments: readonly (string | undefined)[]): PathTemplate {
   };
 }
 
-/** Extracts parameter values from a concrete path using a template. */
-export function matchPath(
-  template: PathTemplate,
-  path: string,
-): Record<string, string> | undefined {
-  const actual = path.split('/').filter((part) => part.length > 0);
-  const expected = template.segments;
-  if (actual.length !== expected.length) return undefined;
-  const values: Record<string, string> = {};
-  for (let index = 0; index < expected.length; index += 1) {
-    const segment = expected[index] as string;
-    const value = actual[index] as string;
-    if (segment.startsWith('{') && segment.endsWith('}')) {
-      values[segment.slice(1, -1)] = value;
-    } else if (segment !== value) {
-      return undefined;
-    }
-  }
-  return values;
-}
-
-/** Stable key that groups observations of the same endpoint together. */
-export function endpointKey(method: string, template: string, origin: string): string {
-  return `${method} ${origin}${template}`;
-}
-
 export { singular };

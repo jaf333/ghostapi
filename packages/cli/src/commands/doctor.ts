@@ -1,6 +1,7 @@
 import { access, constants } from 'node:fs/promises';
 import { platform, release } from 'node:os';
 import { checkBrowserRuntime } from '@ghostapi/browser';
+import { requiredEnvVars } from '@ghostapi/core';
 import { selectEngine } from '@ghostapi/decision';
 import { boolFlag, parse } from '../args.js';
 import { openStore } from '../context.js';
@@ -97,6 +98,24 @@ export async function runChecks(): Promise<Check[]> {
   });
 
   for (const target of targets) {
+    const operations = await store.listOperations(target.slug);
+    const needed = [
+      ...new Set(operations.flatMap((operation) => requiredEnvVars(operation.auth))),
+    ].sort();
+    const missing = needed.filter((name) => !process.env[name]);
+    if (needed.length > 0) {
+      checks.push({
+        name: `credentials:${target.slug}`,
+        status: missing.length === 0 ? 'ok' : 'warn',
+        detail: missing.length === 0 ? `${needed.join(', ')} set` : `${missing.join(', ')} not set`,
+        ...(missing.length === 0
+          ? {}
+          : {
+              remedy: `Operations on this target read their credential from the environment:\n\n  export ${missing[0]}="…"`,
+            }),
+      });
+    }
+
     const auth = await store.readAuth(target.slug);
     if (!auth) {
       checks.push({

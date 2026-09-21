@@ -251,3 +251,39 @@ describe('regressions', () => {
     expect(serialized).toContain('2026-01-01');
   });
 });
+
+describe('operation consistency', () => {
+  it('declares every input its transport reads', () => {
+    const result = inferOperations({
+      target,
+      observations: [
+        uiFixture(),
+        networkFixture(),
+        networkFixture({
+          method: 'PATCH',
+          path: '/api/todos/todo_9ab12c',
+          url: 'https://app.example.com/api/todos/todo_9ab12c',
+          requestBody: { title: 'x' },
+          status: 200,
+        }),
+      ],
+    });
+    expect(result.operations.length).toBeGreaterThan(0);
+    for (const operation of result.operations) {
+      const declared = new Set(Object.keys(operation.inputs.properties ?? {}));
+      const transport = operation.transport;
+      if (transport.type !== 'http') continue;
+      const bound = [
+        ...transport.pathParams,
+        ...Object.values(transport.query)
+          .filter((binding) => binding.kind === 'input')
+          .map((binding) => (binding as { field: string }).field),
+      ];
+      for (const field of bound) {
+        expect(declared.has(field), `${operation.name} binds undeclared input "${field}"`).toBe(
+          true,
+        );
+      }
+    }
+  });
+});

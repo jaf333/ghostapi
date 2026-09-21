@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { authStrategySchema } from './auth.js';
 import { jsonSchemaSchema } from './json-schema.js';
-import { transportSchema } from './transport.js';
+import { transportRank, transportSchema } from './transport.js';
 
 export const operationVerbSchema = z.enum([
   'create',
@@ -113,6 +113,15 @@ export function updateOperation(operation: Operation, patch: Partial<Operation>)
   return { ...operation, ...patch, id: operation.id, updatedAt: Date.now() };
 }
 
+/**
+ * Transports to try, best first.
+ *
+ * Sorted by preference rather than by storage order, so an operation whose
+ * fallbacks were written in an odd order — or imported from elsewhere — still
+ * tries the API before the browser.
+ */
 export function transportChain(operation: Operation): Operation['transport'][] {
-  return [operation.transport, ...operation.fallbacks];
+  return [operation.transport, ...operation.fallbacks].sort(
+    (a, b) => transportRank(a.type) - transportRank(b.type),
+  );
 }

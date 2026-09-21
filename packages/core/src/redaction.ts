@@ -1,5 +1,3 @@
-import type { JsonSchema } from './json-schema.js';
-
 /**
  * Sentinel written in place of anything that looked like a credential.
  * It is a plain string so that downstream schema inference still sees the
@@ -310,8 +308,3 @@ export class SecretRedactor {
 }
 
 export const defaultRedactor = new SecretRedactor();
-
-/** True when a schema leaf only ever saw redacted values, so callers can skip it. */
-export function isRedactedSchema(schema: JsonSchema): boolean {
-  return Array.isArray(schema.enum) && schema.enum.length === 1 && schema.enum[0] === REDACTED;
-}

@@ -5,16 +5,10 @@ import {
   GhostError,
   newId,
   type BrowserTransport,
-  type Observation,
   type Operation,
   type Target,
 } from '@ghostapi/core';
 import type { AuthMaterial, BrowserRunner } from '@ghostapi/executor';
-
-export interface CliContext {
-  readonly store: GhostStore;
-  readonly json: boolean;
-}
 
 export async function openStore(): Promise<GhostStore> {
   const store = GhostStore.resolve();
@@ -102,16 +96,4 @@ export function needsBrowser(operation: Operation): boolean {
   return [operation.transport, ...operation.fallbacks].every(
     (transport) => transport.type === 'browser',
   );
-}
-
-export function countObservations(observations: readonly Observation[]): {
-  network: number;
-  ui: number;
-  state: number;
-} {
-  return {
-    network: observations.filter((item) => item.kind === 'network').length,
-    ui: observations.filter((item) => item.kind === 'ui').length,
-    state: observations.filter((item) => item.kind === 'state').length,
-  };
 }

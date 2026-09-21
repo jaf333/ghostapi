@@ -151,33 +151,6 @@ export function inferSchema(
   return { type, examples: scalars.slice(0, 1), ...nullableFlag };
 }
 
-/** Merges a second schema into a first without losing evidence. */
-export function mergeSchemas(a: JsonSchema, b: JsonSchema): JsonSchema {
-  if (Object.keys(a).length === 0) return b;
-  if (Object.keys(b).length === 0) return a;
-  if (a.type === 'object' && b.type === 'object') {
-    const properties: Record<string, JsonSchema> = { ...a.properties };
-    for (const [key, schema] of Object.entries(b.properties ?? {})) {
-      const existing = properties[key];
-      properties[key] = existing ? mergeSchemas(existing, schema) : schema;
-    }
-    const required = (a.required ?? []).filter((key) => (b.required ?? []).includes(key));
-    return { type: 'object', properties, required, additionalProperties: false };
-  }
-  if (a.type === b.type) {
-    const enumA = a.enum;
-    const enumB = b.enum;
-    if (enumA && enumB) {
-      return { ...a, enum: [...new Set([...enumA, ...enumB])].sort() };
-    }
-    return a;
-  }
-  const types = new Set(
-    [a.type, b.type].flatMap((type) => (Array.isArray(type) ? type : type ? [type] : [])),
-  );
-  return { type: [...types].sort() };
-}
-
 /** Restricts a schema to the top-level properties an operation actually binds. */
 export function pickProperties(schema: JsonSchema, keys: readonly string[]): JsonSchema {
   const properties: Record<string, JsonSchema> = {};
