@@ -29,7 +29,10 @@ export async function startTarget() {
     stdio: ['ignore', 'pipe', 'pipe'],
   });
   const url = await new Promise((resolveUrl, rejectUrl) => {
-    const timer = setTimeout(() => rejectUrl(new Error('demo target did not start in 15s')), 15_000);
+    const timer = setTimeout(
+      () => rejectUrl(new Error('demo target did not start in 15s')),
+      15_000,
+    );
     child.stdout.on('data', (chunk) => {
       const match = /listening on (http:\/\/\S+)/.exec(String(chunk));
       if (match) {
@@ -42,10 +45,19 @@ export async function startTarget() {
       rejectUrl(new Error(`demo target exited with code ${code}`));
     });
   });
+  // A live child handle keeps this process's event loop alive, so a target that
+  // refuses to die would hang the gate rather than fail it.
+  child.unref();
+
   return {
     url,
     async stop() {
+      if (child.exitCode !== null || child.signalCode !== null) return;
+      const exited = new Promise((resolveExit) => child.once('exit', resolveExit));
       child.kill('SIGTERM');
+      const timer = setTimeout(() => child.kill('SIGKILL'), 2_000);
+      await Promise.race([exited, new Promise((r) => setTimeout(r, 4_000))]);
+      clearTimeout(timer);
     },
   };
 }
@@ -69,7 +81,9 @@ export function ghostapi(args, options = {}) {
 export function ghostapiJson(args, options = {}) {
   const result = ghostapi([...args, '--json'], options);
   if (result.code !== 0) {
-    fail(`\`ghostapi ${args.join(' ')} --json\` exited ${result.code}\n${result.stderr}${result.stdout}`);
+    fail(
+      `\`ghostapi ${args.join(' ')} --json\` exited ${result.code}\n${result.stderr}${result.stdout}`,
+    );
   }
   try {
     return JSON.parse(result.stdout);
@@ -85,10 +99,9 @@ export function ghostapiJson(args, options = {}) {
 export async function discoveredWorkspace() {
   const target = await startTarget();
   const cwd = await makeWorkspace();
-  const result = ghostapi(
-    ['open', target.url, '--headless', '--script', DEMO_SCRIPT, '--quiet'],
-    { cwd },
-  );
+  const result = ghostapi(['open', target.url, '--headless', '--script', DEMO_SCRIPT, '--quiet'], {
+    cwd,
+  });
   if (result.code !== 0) {
     await target.stop();
     fail(`discovery session failed (exit ${result.code}):\n${result.stderr}${result.stdout}`);
@@ -131,5 +144,9 @@ export async function exists(path) {
 export async function fetchJson(url, init) {
   const response = await fetch(url, init);
   const text = await response.text();
-  return { status: response.status, body: text.length > 0 ? JSON.parse(text) : null, headers: response.headers };
+  return {
+    status: response.status,
+    body: text.length > 0 ? JSON.parse(text) : null,
+    headers: response.headers,
+  };
 }

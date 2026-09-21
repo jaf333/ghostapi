@@ -369,7 +369,7 @@ it is a constructor argument.
 ## Tests
 
 ```bash
-pnpm test                                  # 256 unit tests
+pnpm test                                  # 259 unit tests
 node scripts/gates/check-inference.mjs     # derives createTodo from a live browser session
 node scripts/gates/check-mcp.mjs           # a real MCP client calls the exported server
 node scripts/gates/check-redaction.mjs     # no live secret reaches disk or any export

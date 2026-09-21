@@ -172,6 +172,9 @@ export async function startDemoTarget(
     },
     close: () =>
       new Promise<void>((resolve, reject) => {
+        // Keep-alive sockets keep `close` pending forever. Drop them first,
+        // otherwise a caller that shuts this server down simply hangs.
+        server.closeAllConnections?.();
         server.close((error) => (error ? reject(error) : resolve()));
       }),
   };
@@ -184,7 +187,14 @@ if (isMain) {
   const handle = await startDemoTarget();
   process.stdout.write(`demo-target listening on ${handle.url}\n`);
   const shutdown = () => {
-    void handle.close().then(() => process.exit(0));
+    // Exit even if a connection refuses to drain: a demo server that ignores
+    // SIGTERM leaves every caller's process hanging on a live child handle.
+    const force = setTimeout(() => process.exit(0), 2_000);
+    force.unref();
+    void handle
+      .close()
+      .then(() => process.exit(0))
+      .catch(() => process.exit(1));
   };
   process.on('SIGINT', shutdown);
   process.on('SIGTERM', shutdown);
