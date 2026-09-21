@@ -188,8 +188,6 @@ export class CdpNetworkCapture {
     if (!entry) return;
     this.pending.delete(requestId);
 
-    this.mergeExtraHeaders(entry);
-
     let postData = entry.postData;
     if (postData === undefined && entry.hasPostData) {
       postData = await this.safeSend<{ postData?: string }>(cdp, 'Network.getRequestPostData', {
@@ -238,6 +236,9 @@ export class CdpNetworkCapture {
     responseText: string | undefined,
   ): void {
     const { redactor, sink, sessionId } = this.options;
+    // Merged at the last possible moment: Chrome reports network-layer headers
+    // (Cookie among them) on a separate event that can land after the response.
+    this.mergeExtraHeaders(entry);
 
     const requestKind = bodyKindFor(entry.headers['content-type'], postData);
     const parsedRequest = parseBody(requestKind, postData);

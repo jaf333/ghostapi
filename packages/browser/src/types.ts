@@ -29,6 +29,15 @@ export interface OpenSessionOptions {
   /** Paths that are never worth recording (analytics, HMR, static assets). */
   readonly ignorePatterns: readonly string[];
   readonly viewport?: { width: number; height: number };
+  /**
+   * Cookies to seed the context with before the first navigation.
+   *
+   * Session cookies are discarded by the browser on exit, by design, so a
+   * persistent profile alone cannot carry a signed-in session between runs.
+   * GhostAPI keeps its own session record and replays it here, which is what
+   * makes the browser transport and the HTTP transport behave identically.
+   */
+  readonly cookies?: readonly SessionCookie[];
 }
 
 export interface BrowserStepResult {

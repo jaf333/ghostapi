@@ -130,7 +130,17 @@ export const instrumentScript = `
     'submit',
     (event) => {
       const form = event.target;
-      report('ui', { type: 'submit', ...describe(form), url: location.href, formFields: fieldsOf(form), modifiers: [] });
+      const submitter =
+        event.submitter ||
+        form.querySelector('button[type="submit"], input[type="submit"], button:not([type])');
+      report('ui', {
+        type: 'submit',
+        ...describe(form),
+        submitterSelector: submitter ? selectorFor(submitter) : undefined,
+        url: location.href,
+        formFields: fieldsOf(form),
+        modifiers: [],
+      });
     },
     true,
   );

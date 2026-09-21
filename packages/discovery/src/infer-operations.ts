@@ -136,6 +136,15 @@ export function inferOperations(options: DiscoveryOptions): DiscoveryResult {
   });
   const correlationById = new Map(correlations.map((item) => [item.observation.id, item]));
 
+  // Credential headers observed anywhere on each origin.
+  const originAuthHeaders = new Map<string, Set<string>>();
+  for (const observation of apiLike) {
+    if (observation.sensitiveRequestHeaders.length === 0) continue;
+    const bucket = originAuthHeaders.get(observation.origin) ?? new Set<string>();
+    for (const name of observation.sensitiveRequestHeaders) bucket.add(name);
+    originAuthHeaders.set(observation.origin, bucket);
+  }
+
   const groups = groupObservations(apiLike);
   const skipped: SkippedGroup[] = [];
   const taken = new Set<string>();
@@ -155,6 +164,7 @@ export function inferOperations(options: DiscoveryOptions): DiscoveryResult {
       target: options.target,
       taken,
       existing: options.existing ?? [],
+      originAuthHeaders,
     });
     if (!operation) {
       skipped.push({ key, reason: 'not enough evidence to describe an operation' });
@@ -181,6 +191,7 @@ interface BuildInput {
   target: Target;
   taken: Set<string>;
   existing: readonly Operation[];
+  originAuthHeaders: Map<string, Set<string>>;
 }
 
 function buildOperation(input: BuildInput): Operation | undefined {
@@ -341,7 +352,14 @@ function buildOperation(input: BuildInput): Operation | undefined {
     output: Object.keys(responseSchema).length > 0 ? responseSchema : undefined,
     transport,
     fallbacks: fallback ? [fallback] : [],
-    auth: inferAuth(members, target.slug),
+    auth: inferAuth(
+      members,
+      target.slug,
+      // A sign-in request cannot carry the session it is about to create.
+      naming.verb === 'auth' && first.method !== 'GET'
+        ? []
+        : [...(input.originAuthHeaders.get(first.origin) ?? [])],
+    ),
     confidence: confidence.value,
     evidence,
     uiTriggers: mergeTriggers(linkedInteractions.map(describeTrigger)),

@@ -123,7 +123,20 @@ export function inferSchema(
       distinct.length < real.length &&
       distinct.every((value) => value.length > 0 && value.length <= options.maxEnumValueLength);
     if (eligibleForEnum) {
-      return { type: 'string', enum: [...distinct].sort(), ...nullableFlag };
+      // The most frequently observed member doubles as the example. It is what
+      // the application itself used most often, which makes it the only
+      // defensible default when a caller does not name one.
+      const counts = new Map<string, number>();
+      for (const value of real) counts.set(value, (counts.get(value) ?? 0) + 1);
+      const mostCommon = [...counts.entries()].sort(
+        (a, b) => b[1] - a[1] || a[0].localeCompare(b[0]),
+      )[0]?.[0];
+      return {
+        type: 'string',
+        enum: [...distinct].sort(),
+        ...(mostCommon !== undefined ? { examples: [mostCommon] } : {}),
+        ...nullableFlag,
+      };
     }
     const format = formatOf(real);
     return {

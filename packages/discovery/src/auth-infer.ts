@@ -16,10 +16,19 @@ function envNameFor(slug: string): string {
 export function inferAuth(
   observations: readonly NetworkObservation[],
   targetSlug: string,
+  /**
+   * Credential headers seen anywhere on the same origin. Authentication is a
+   * property of the application, not of one request: Chrome reports network
+   * headers on a side channel and occasionally that record is missed, so a
+   * single observation without a Cookie header is weak evidence of a public
+   * endpoint, while the origin as a whole is strong evidence.
+   */
+  originHeaderNames: readonly string[] = [],
 ): AuthStrategy {
-  const headerNames = new Set(
-    observations.flatMap((observation) => observation.sensitiveRequestHeaders),
-  );
+  const headerNames = new Set([
+    ...observations.flatMap((observation) => observation.sensitiveRequestHeaders),
+    ...originHeaderNames,
+  ]);
   if (headerNames.has('authorization')) {
     return { strategy: 'header', header: 'authorization', env: envNameFor(targetSlug), prefix: 'Bearer ' };
   }

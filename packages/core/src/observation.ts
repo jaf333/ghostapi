@@ -115,6 +115,12 @@ export const uiInteractionSchema = z
     type: uiInteractionKindSchema,
     /** Stable-ish selector recorded for browser-fallback replay. */
     selector: z.string().optional(),
+    /**
+     * For a submit, the control that actually submitted the form. Replaying a
+     * submit means pressing that control; clicking the <form> itself does
+     * nothing.
+     */
+    submitterSelector: z.string().optional(),
     tagName: z.string().optional(),
     role: z.string().optional(),
     label: z.string().optional(),

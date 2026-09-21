@@ -1,0 +1,26 @@
+{
+  "name": "ghostapi",
+  "version": "0.1.0",
+  "description": "Turn web apps into agent-native operations. GhostAPI watches a web app, derives the operations behind its UI, and exposes them as typed tools for AI agents.",
+  "license": "MIT",
+  "type": "module",
+  "bin": { "ghostapi": "./dist/bin.js" },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"],
+  "keywords": ["mcp", "agents", "api", "browser", "automation", "openapi", "ai"],
+  "engines": { "node": ">=20.11" },
+  "scripts": { "build": "tsc -b", "typecheck": "tsc -b", "test:unit": "vitest run", "test": "vitest run" },
+  "dependencies": {
+    "@ghostapi/browser": "workspace:*",
+    "@ghostapi/core": "workspace:*",
+    "@ghostapi/decision": "workspace:*",
+    "@ghostapi/discovery": "workspace:*",
+    "@ghostapi/eval": "workspace:*",
+    "@ghostapi/executor": "workspace:*",
+    "@ghostapi/exporters": "workspace:*",
+    "@ghostapi/store": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.30.0"
+  },
+  "devDependencies": { "typescript": "^5.7.2", "vitest": "^2.1.8", "@types/node": "^22.10.2" }
+}

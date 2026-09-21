@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": { "rootDir": "src", "outDir": "dist" },
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/**/*.test.ts"],
+  "references": [
+    { "path": "../core" },
+    { "path": "../store" },
+    { "path": "../browser" },
+    { "path": "../discovery" },
+    { "path": "../executor" },
+    { "path": "../decision" },
+    { "path": "../exporters" },
+    { "path": "../eval" }
+  ]
+}

@@ -1,0 +1,47 @@
+[
+  { "action": "waitFor", "selector": "#login-form", "timeoutMs": 15000 },
+  { "action": "click", "selector": "#login-form button[type=\"submit\"]" },
+  { "action": "waitFor", "selector": "#create-form", "timeoutMs": 15000 },
+
+  { "action": "fill", "selector": "#new-title", "value": { "kind": "literal", "value": "Buy milk" } },
+  { "action": "fill", "selector": "#new-priority", "value": { "kind": "literal", "value": "high" } },
+  { "action": "click", "selector": "#create-form button[type=\"submit\"]" },
+  { "action": "waitFor", "timeoutMs": 2500 },
+
+  { "action": "fill", "selector": "#new-title", "value": { "kind": "literal", "value": "Write the launch post" } },
+  { "action": "fill", "selector": "#new-priority", "value": { "kind": "literal", "value": "normal" } },
+  { "action": "click", "selector": "#create-form button[type=\"submit\"]" },
+  { "action": "waitFor", "timeoutMs": 2500 },
+
+  { "action": "fill", "selector": "#new-title", "value": { "kind": "literal", "value": "Water the plants" } },
+  { "action": "fill", "selector": "#new-priority", "value": { "kind": "literal", "value": "low" } },
+  { "action": "click", "selector": "#create-form button[type=\"submit\"]" },
+  { "action": "waitFor", "timeoutMs": 2500 },
+
+  { "action": "fill", "selector": "#new-title", "value": { "kind": "literal", "value": "Book the flights" } },
+  { "action": "fill", "selector": "#new-priority", "value": { "kind": "literal", "value": "high" } },
+  { "action": "click", "selector": "#create-form button[type=\"submit\"]" },
+  { "action": "waitFor", "timeoutMs": 2500 },
+
+  { "action": "fill", "selector": "#new-title", "value": { "kind": "literal", "value": "Reply to the investor" } },
+  { "action": "fill", "selector": "#new-priority", "value": { "kind": "literal", "value": "normal" } },
+  { "action": "click", "selector": "#create-form button[type=\"submit\"]" },
+  { "action": "waitFor", "timeoutMs": 2500 },
+
+  { "action": "fill", "selector": "#search-input", "value": { "kind": "literal", "value": "milk" } },
+  { "action": "click", "selector": "#search-form button[type=\"submit\"]" },
+  { "action": "waitFor", "timeoutMs": 2000 },
+  { "action": "fill", "selector": "#search-input", "value": { "kind": "literal", "value": "" } },
+  { "action": "click", "selector": "#search-form button[type=\"submit\"]" },
+  { "action": "waitFor", "timeoutMs": 2000 },
+
+  { "action": "click", "selector": "#todo-list li:nth-of-type(1) button:text(\"Rename\")" },
+  { "action": "waitFor", "timeoutMs": 2000 },
+  { "action": "click", "selector": "#todo-list li:nth-of-type(2) button:text(\"Rename\")" },
+  { "action": "waitFor", "timeoutMs": 2000 },
+
+  { "action": "click", "selector": "#todo-list li:nth-of-type(3) button:text(\"Archive\")" },
+  { "action": "waitFor", "timeoutMs": 2000 },
+  { "action": "click", "selector": "#todo-list li:nth-of-type(3) button:text(\"Delete\")" },
+  { "action": "waitFor", "timeoutMs": 2000 }
+]

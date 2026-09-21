@@ -192,6 +192,22 @@ export class PlaywrightDriver implements BrowserDriver {
       );
     }
 
+    if (options.cookies && options.cookies.length > 0) {
+      await context
+        .addCookies(
+          options.cookies.map((cookie) => ({
+            name: cookie.name,
+            value: cookie.value,
+            domain: cookie.domain,
+            path: cookie.path || '/',
+            expires: cookie.expires,
+            httpOnly: cookie.httpOnly,
+            secure: cookie.secure,
+          })),
+        )
+        .catch(() => undefined);
+    }
+
     await context.addInitScript(instrumentScript);
     await context.exposeBinding(
       INSTRUMENT_BINDING,

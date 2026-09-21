@@ -358,7 +358,9 @@ export async function executeOperation(options: ExecuteOptions): Promise<Executi
   }
 
   const attempts: ExecutionAttempt[] = [];
-  let lastError: unknown;
+  // The preferred transport's failure is the one worth reporting. A browser
+  // fallback that was never configured is a consequence, not the cause.
+  let primaryError: unknown;
 
   for (const transport of chain) {
     try {
@@ -384,7 +386,7 @@ export async function executeOperation(options: ExecuteOptions): Promise<Executi
         ok: false,
         error: error instanceof Error ? error.message : String(error),
       });
-      lastError = error;
+      primaryError ??= error;
       // An input or confirmation problem will not be fixed by another transport.
       if (
         error instanceof GhostError &&
@@ -395,8 +397,20 @@ export async function executeOperation(options: ExecuteOptions): Promise<Executi
     }
   }
 
-  throw lastError instanceof Error
-    ? lastError
+  if (primaryError instanceof GhostError && attempts.length > 1) {
+    throw new GhostError(
+      {
+        code: primaryError.code,
+        title: primaryError.title,
+        detail: primaryError.detail,
+        remedy: primaryError.remedy,
+        context: { ...primaryError.context, attempts },
+      },
+      { cause: primaryError },
+    );
+  }
+  throw primaryError instanceof Error
+    ? primaryError
     : new GhostError({
         code: ErrorCodes.ExecutionFailed,
         title: 'Operation execution failed',

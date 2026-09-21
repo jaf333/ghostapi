@@ -36,10 +36,13 @@ export function buildBrowserFallback(
     });
   }
 
+  // A submit event targets the <form>; clicking a form does nothing. Replay the
+  // control the browser reported as the submitter.
+  const activation = interaction.submitterSelector ?? interaction.selector;
   steps.push({
     action: 'click',
-    selector: interaction.selector,
-    description: interaction.label ?? interaction.text ?? interaction.selector,
+    selector: activation,
+    description: interaction.label ?? interaction.text ?? activation,
   });
   steps.push({ action: 'waitFor', timeoutMs: 10_000 });
 
