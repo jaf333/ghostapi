@@ -1,7 +1,10 @@
 'use server';
 
+import { spawn } from 'node:child_process';
+import { existsSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { revalidatePath } from 'next/cache';
-import { isGhostError } from '@ghostapi/core';
+import { assertSafeUrl, isGhostError } from '@ghostapi/core';
 import { executeOperation } from '@ghostapi/executor';
 import { store } from '@/lib/store';
 
@@ -73,4 +76,62 @@ export async function runOperation(
     }
     return { status: 'error', message: error instanceof Error ? error.message : String(error) };
   }
+}
+
+export interface DiscoveryState {
+  readonly status: 'idle' | 'started' | 'error';
+  readonly message?: string;
+  readonly slug?: string;
+}
+
+/**
+ * Starts a real discovery session.
+ *
+ * The browser has to run on this machine, so the inspector shells out to the
+ * same CLI a person would type. It is spawned detached and its output is
+ * discarded: the evidence lands in the store, which is what this page reads.
+ */
+export async function startDiscovery(
+  _previous: DiscoveryState,
+  formData: FormData,
+): Promise<DiscoveryState> {
+  const url = String(formData.get('url') ?? '').trim();
+  if (url.length === 0) return { status: 'error', message: 'Enter a URL.' };
+
+  try {
+    assertSafeUrl(url);
+  } catch (error) {
+    return {
+      status: 'error',
+      message: isGhostError(error)
+        ? `${error.title}: ${error.detail}`
+        : 'That is not a usable URL.',
+    };
+  }
+
+  const cli = fileURLToPath(new URL('../../../packages/cli/dist/bin.js', import.meta.url));
+  if (!existsSync(cli)) {
+    return {
+      status: 'error',
+      message: 'The GhostAPI CLI is not built. Run `pnpm build` in the repository root.',
+    };
+  }
+
+  const ghost = store();
+  const child = spawn(process.execPath, [cli, 'open', url, '--quiet'], {
+    cwd: process.env.GHOSTAPI_CWD ?? process.cwd(),
+    detached: true,
+    stdio: 'ignore',
+    env: { ...process.env, NO_COLOR: '1' },
+  });
+  child.unref();
+
+  const target = await ghost.createTarget({ url });
+  revalidatePath('/');
+  return {
+    status: 'started',
+    slug: target.slug,
+    message:
+      'A browser window is opening. Sign in if you need to, use the application, then close the window — GhostAPI derives the operations when it closes.',
+  };
 }

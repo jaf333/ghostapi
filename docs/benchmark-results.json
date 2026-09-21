@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-21T18:52:13.833Z",
+  "generatedAt": "2026-09-21T19:31:00.891Z",
   "generatedBy": "node scripts/measure-demo.mjs",
   "environment": {
     "node": "v22.23.2",
@@ -21,33 +21,48 @@
     ],
     "createTodoConfidence": 0.94,
     "createTodoObservations": 5,
-    "createTodoInputs": ["priority", "projectId", "title"]
+    "createTodoInputs": [
+      "priority",
+      "projectId",
+      "title"
+    ]
   },
   "run": {
     "transport": "http",
     "status": 201,
-    "latencyMs": 26
+    "latencyMs": 11
   },
   "ask": {
     "engine": "heuristic",
     "operation": "createTodo",
     "confidence": 0.9,
     "status": 201,
-    "latencyMs": 24
+    "latencyMs": 7
   },
   "benchmark": {
     "runs": 5,
-    "browserMs": 7860,
+    "browserMs": 1826,
+    "browserSpreadMs": {
+      "min": 1267,
+      "max": 11212,
+      "samples": 5
+    },
     "browserInteractions": 5,
-    "browserRequests": 33,
+    "browserRequests": 30,
     "browserTokens": "unavailable",
-    "apiMs": 68,
+    "apiMs": 10,
+    "apiSpreadMs": {
+      "min": 5,
+      "max": 22,
+      "samples": 5
+    },
     "apiRequests": 1,
     "apiModelCalls": 0,
     "apiTokens": 0,
-    "speedup": 115.6,
+    "speedup": 182.6,
     "notes": [
       "The browser figure is a scripted replay of the recorded UI steps with no model in the loop. A real browser agent adds model latency and tokens on top, so this comparison understates the gap rather than inflating it.",
+      "Each path runs once untimed to warm up, then the reported figure is the median of the timed runs. A single cold run is dominated by process warm-up, and a mean lets one outlier decide the headline.",
       "Zero model calls on the GhostAPI path: `run` executes a typed operation directly."
     ]
   },

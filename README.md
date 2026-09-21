@@ -93,17 +93,19 @@ latency    26 ms
 
 ## Browser vs GhostAPI
 
-Measured on the reference application in this repository, 5 runs per path:
+Measured on the reference application in this repository, 5 timed runs per path
+after one untimed warm-up:
 
-|              |              browser (recorded UI replay) | ghostapi (direct API) |
-| ------------ | ----------------------------------------: | --------------------: |
-| time         |                                   7860 ms |             **68 ms** |
-| interactions |                                         5 |                     0 |
-| requests     |                                        33 |                     1 |
-| model calls  |                                         0 |                     0 |
-| tokens       | _unavailable — no model ran on this path_ |                     0 |
+|                   |              browser (recorded UI replay) | ghostapi (direct API) |
+| ----------------- | ----------------------------------------: | --------------------: |
+| median time       |                                   1826 ms |             **10 ms** |
+| range over 5 runs |                             1267–11212 ms |               5–22 ms |
+| interactions      |                                         5 |                     0 |
+| requests          |                                        30 |                     1 |
+| model calls       |                                         0 |                     0 |
+| tokens            | _unavailable — no model ran on this path_ |                     0 |
 
-**115.6× faster through the discovered API.**
+**182.6× faster through the discovered API.**
 
 Reproduce it yourself:
 
@@ -112,13 +114,18 @@ pnpm install && pnpm build
 node scripts/measure-demo.mjs        # writes docs/benchmark-results.json
 ```
 
-Every number in this README comes out of that file. A check in
+Every number in this README comes out of that file, and the full rendered table
+lives in [docs/benchmark-results.md](docs/benchmark-results.md). A check in
 `scripts/gates/check-docs.mjs` fails if they ever drift apart.
+
+Each path runs once untimed to warm up, then the figure is the **median** of the
+timed runs with the range beside it. A single cold run is dominated by process
+warm-up, and a mean would let one outlier pick the headline.
 
 **What the comparison is, precisely.** The browser figure is a _scripted replay_
 of the recorded UI steps with no model in the loop. We cannot measure a browser
 agent we did not build, and inventing its numbers would be dishonest. A real LLM
-browser agent adds model latency and tokens on top of that 7860 ms, so the ratio
+browser agent adds model latency and tokens on top of that 1826 ms, so the ratio
 above understates the gap rather than inflating it. Anything GhostAPI cannot
 measure prints `unavailable`, never an estimate.
 

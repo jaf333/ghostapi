@@ -68,6 +68,7 @@ try {
     benchmark: {
       runs: benchmark.runs,
       browserMs: benchmark.browser.durationMs.measured ? benchmark.browser.durationMs.value : null,
+      browserSpreadMs: benchmark.browser.spread.measured ? benchmark.browser.spread.value : null,
       browserInteractions: benchmark.browser.interactions.measured
         ? benchmark.browser.interactions.value
         : null,
@@ -76,6 +77,7 @@ try {
         : null,
       browserTokens: benchmark.browser.tokens.measured ? benchmark.browser.tokens.value : 'unavailable',
       apiMs: benchmark.api.durationMs.measured ? benchmark.api.durationMs.value : null,
+      apiSpreadMs: benchmark.api.spread.measured ? benchmark.api.spread.value : null,
       apiRequests: benchmark.api.networkRequests.measured ? benchmark.api.networkRequests.value : null,
       apiModelCalls: benchmark.api.modelCalls.measured ? benchmark.api.modelCalls.value : 'unavailable',
       apiTokens: benchmark.api.tokens.measured ? benchmark.api.tokens.value : 'unavailable',
@@ -95,6 +97,10 @@ try {
   const file = join(REPO, 'docs', 'benchmark-results.json');
   await writeFile(file, `${JSON.stringify(results, null, 2)}\n`, 'utf8');
   process.stdout.write(`${file}\n`);
+
+  // The published table is a projection of the measurement, never typed by hand.
+  const { spawnSync } = await import('node:child_process');
+  spawnSync(process.execPath, [join(REPO, 'scripts', 'render-benchmark.mjs')], { stdio: 'inherit' });
   process.stdout.write(
     `browser ${results.benchmark.browserMs}ms vs api ${results.benchmark.apiMs}ms → ${results.benchmark.speedup}x\n`,
   );

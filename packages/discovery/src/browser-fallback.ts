@@ -44,7 +44,11 @@ export function buildBrowserFallback(
     selector: activation,
     description: interaction.label ?? interaction.text ?? activation,
   });
-  steps.push({ action: 'waitFor', timeoutMs: 10_000 });
+  // A short settle, not a long one. Correctness is established by the request
+  // assertion below, not by waiting for network idle — and a ten-second idle
+  // wait that usually times out makes every replay both slow and wildly
+  // variable, which is exactly what a benchmark must not be.
+  steps.push({ action: 'waitFor', timeoutMs: 1_500 });
 
   return {
     type: 'browser',

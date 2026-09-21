@@ -1,3 +1,4 @@
+import { StartDiscovery } from '@/app/StartDiscovery';
 import { listTargetSummaries } from '@/lib/store';
 
 export const dynamic = 'force-dynamic';
@@ -62,10 +63,11 @@ export default async function Home() {
       )}
 
       <h2>Start a discovery session</h2>
-      <p className="notice">
-        Discovery opens a real browser on this machine, so it runs from the terminal rather than
-        from this page. Point it at an application you are allowed to automate, sign in yourself,
-        and use it once.
+      <StartDiscovery />
+      <p className="notice" style={{ marginTop: 16 }}>
+        Discovery opens a real browser on this machine and watches it. Point it at an application
+        you are allowed to automate, sign in yourself, and use it once. The same thing happens from
+        the terminal:
       </p>
       <pre style={{ marginTop: 12 }}>{`ghostapi open https://app.example.com
 # use the app, then close the window

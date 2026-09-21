@@ -35,7 +35,7 @@ missing it. This makes single-session discovery conservative — often _too_
 conservative — but the alternative is shipping guesses as types. I'd rather be
 under-confident and say so.
 
-**3. The benchmark.** The repo reports 7860 ms (browser) vs 68 ms (API), 115.6×.
+**3. The benchmark.** The repo reports 1826 ms (browser) vs 10 ms (API), 182.6×.
 I want to be precise about what that is: the browser figure is a **scripted
 replay** of recorded UI steps with **no model in the loop**. I can't measure an
 LLM browser agent I didn't build, and inventing its numbers would be dishonest.
@@ -78,3 +78,9 @@ model is the right shape. The default engine is deterministic and offline anyway
 _"Legal?"_ — Same as any automation: depends on the site's terms and your
 relationship to it. GhostAPI doesn't circumvent controls, and the README says so
 rather than being coy.
+
+---
+
+Figures above come from `docs/benchmark-results.json`. Re-run
+`node scripts/measure-demo.mjs` before posting and update them; never publish a
+number you did not just measure.

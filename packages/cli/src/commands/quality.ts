@@ -150,7 +150,13 @@ export async function benchmarkCommand(argv: readonly string[]): Promise<void> {
       ],
       [result.browser, result.api].map((path) => [
         path.ok ? path.label : `${path.label} ${style.red('(failed)')}`,
-        path.durationMs.measured ? `${path.durationMs.value} ms` : style.gray('unavailable'),
+        path.durationMs.measured
+          ? `${path.durationMs.value} ms${
+              path.spread.measured && path.spread.value.samples > 1
+                ? style.gray(` (${path.spread.value.min}–${path.spread.value.max})`)
+                : ''
+            }`
+          : style.gray('unavailable'),
         renderMeasured(path.interactions),
         renderMeasured(path.networkRequests),
         renderMeasured(path.modelCalls),

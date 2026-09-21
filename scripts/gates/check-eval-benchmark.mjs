@@ -51,6 +51,22 @@ try {
     'the benchmark does not disclose that the browser path runs without a model',
   );
 
+  check(benchmark.browser.spread.measured === true, 'the browser path reports no spread');
+  check(benchmark.api.spread.measured === true, 'the API path reports no spread');
+  check(
+    benchmark.api.spread.value.samples === benchmark.runs,
+    `the API path timed ${benchmark.api.spread.value.samples} runs but reported ${benchmark.runs}`,
+  );
+  check(
+    benchmark.api.spread.value.min <= benchmark.api.durationMs.value &&
+      benchmark.api.durationMs.value <= benchmark.api.spread.value.max,
+    'the reported median lies outside the measured range',
+  );
+  check(
+    benchmark.notes.some((note) => /median/.test(note)),
+    'the benchmark does not disclose that it reports a median after a warm-up run',
+  );
+
   // The measured ratio must be consistent with the measured durations.
   const expected = benchmark.browser.durationMs.value / benchmark.api.durationMs.value;
   check(

@@ -187,3 +187,64 @@ describe('measured figures', () => {
     expect(missing.measured === false && missing.reason).toBe('no model ran');
   });
 });
+
+describe('benchmark reporting', () => {
+  it('reports the median, not the mean, so one outlier cannot decide the headline', async () => {
+    const { benchmarkOperation } = await import('./benchmark.js');
+    let call = 0;
+    // 1 warm-up + 5 timed. One timed call is deliberately slow.
+    const slowOnce = (async () => {
+      call += 1;
+      if (call === 3) await new Promise((resolve) => setTimeout(resolve, 120));
+      return new Response(JSON.stringify({ ok: true }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      });
+    }) as unknown as typeof fetch;
+
+    const original = globalThis.fetch;
+    globalThis.fetch = slowOnce;
+    try {
+      const result = await benchmarkOperation({
+        operation: operation(),
+        inputs: { status: 'active' },
+        auth: {},
+        runs: 5,
+      });
+      expect(result.api.durationMs.measured).toBe(true);
+      expect(result.api.spread.measured).toBe(true);
+      if (result.api.spread.measured) {
+        expect(result.api.spread.value.samples).toBe(5);
+        // The slow call is visible in the spread but does not move the median.
+        expect(result.api.spread.value.max).toBeGreaterThanOrEqual(100);
+      }
+      if (result.api.durationMs.measured) {
+        expect(result.api.durationMs.value).toBeLessThan(100);
+      }
+    } finally {
+      globalThis.fetch = original;
+    }
+  });
+
+  it('discloses its method alongside the numbers', async () => {
+    const { benchmarkOperation } = await import('./benchmark.js');
+    const original = globalThis.fetch;
+    globalThis.fetch = (async () =>
+      new Response('{}', {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      })) as unknown as typeof fetch;
+    try {
+      const result = await benchmarkOperation({
+        operation: operation(),
+        inputs: { status: 'active' },
+        auth: {},
+        runs: 2,
+      });
+      expect(result.notes.some((note) => /median/.test(note))).toBe(true);
+      expect(result.notes.some((note) => /understates/.test(note))).toBe(true);
+    } finally {
+      globalThis.fetch = original;
+    }
+  });
+});

@@ -16,7 +16,7 @@ GhostAPI watches the app while you use it once, correlates your interactions
 with its network traffic, and derives typed operations. Then it replays them —
 no browser, no DOM, no vision model.
 
-Measured on the reference app in the repo: 7860 ms → 68 ms, 1 request instead of
+Measured on the reference app in the repo: 1826 ms → 10 ms, 1 request instead of
 33, zero model calls on the fast path.
 
 Being precise about that number: the browser figure is a scripted replay with no
@@ -72,3 +72,9 @@ or just seeing what your own frontend actually sends.
 
 It reuses the session you signed into. No credential ever gets stored in an
 export.
+
+---
+
+Figures above come from `docs/benchmark-results.json`. Re-run
+`node scripts/measure-demo.mjs` before posting and update them; never publish a
+number you did not just measure.

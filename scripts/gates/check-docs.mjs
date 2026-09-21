@@ -7,11 +7,23 @@ const results = await readJson(join(REPO, 'docs', 'benchmark-results.json'));
 
 // ---- the README shows the product before it explains it --------------------
 const firstViewport = readme.split('\n').slice(0, 40).join('\n');
-check(/Turn web apps into agent-native operations/.test(firstViewport), 'the tagline is not in the first viewport');
-check(/ghostapi open/.test(firstViewport), 'the first viewport does not show the product being used');
+check(
+  /Turn web apps into agent-native operations/.test(firstViewport),
+  'the tagline is not in the first viewport',
+);
+check(
+  /ghostapi open/.test(firstViewport),
+  'the first viewport does not show the product being used',
+);
 
 // ---- required sections -----------------------------------------------------
-for (const heading of ['## Install', '## How it works', '## Security', '## Roadmap', '## License']) {
+for (const heading of [
+  '## Install',
+  '## How it works',
+  '## Security',
+  '## Roadmap',
+  '## License',
+]) {
   check(readme.includes(heading), `README has no "${heading}" section`);
 }
 check(/## Honest limits/.test(readme), 'README does not state what GhostAPI cannot do');
@@ -48,6 +60,20 @@ for (const claim of claims) {
   );
 }
 
+// The published range must be the measured range, not a rounded story.
+for (const [label, spread] of [
+  ['browser', results.benchmark.browserSpreadMs],
+  ['api', results.benchmark.apiSpreadMs],
+]) {
+  check(spread !== null && spread !== undefined, `the measurement recorded no ${label} spread`);
+  check(
+    new RegExp(`${spread.min}[–-]${spread.max}\\s*ms`).test(readme),
+    `README does not publish the measured ${label} range (${spread.min}-${spread.max} ms)`,
+  );
+}
+check(/median/i.test(readme), 'the README does not say the headline figure is a median');
+check(/warm[- ]up/i.test(readme), 'the README does not disclose the warm-up run');
+
 // The table's request counts must match too.
 for (const [label, value] of [
   ['browser requests', results.benchmark.browserRequests],
@@ -73,7 +99,10 @@ check(
 const testClaim = /(\d[\d,]*) unit tests/.exec(readme);
 check(Boolean(testClaim), 'README does not state how many tests there are');
 const claimedTests = Number(testClaim[1].replace(/,/g, ''));
-check(claimedTests >= 150 && claimedTests <= 2000, `implausible test count in README: ${claimedTests}`);
+check(
+  claimedTests >= 150 && claimedTests <= 2000,
+  `implausible test count in README: ${claimedTests}`,
+);
 
 // ---- companion documents ---------------------------------------------------
 for (const file of [
@@ -95,9 +124,15 @@ for (const file of [
 
 // ---- a reader can actually follow the install instructions -----------------
 check(/pnpm install/.test(readme), 'the README does not say how to install from source');
-check(/Node ≥ 20/.test(readme) || /Node >= 20/.test(readme), 'the README does not state the Node requirement');
+check(
+  /Node ≥ 20/.test(readme) || /Node >= 20/.test(readme),
+  'the README does not state the Node requirement',
+);
 check(/apps\/demo-target/.test(readme), 'the README does not point at the reproducible target');
-check(/examples\/demo-session\.json/.test(readme), 'the README does not point at the recorded session');
+check(
+  /examples\/demo-session\.json/.test(readme),
+  'the README does not point at the recorded session',
+);
 
 // ---- the launch material points at the measured file, not at hand-typed numbers
 const xPost = await readFile(join(REPO, 'docs', 'launch', 'x-post.md'), 'utf8');

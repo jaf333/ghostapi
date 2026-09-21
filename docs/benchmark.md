@@ -52,13 +52,9 @@ ghostapi benchmark createTodo '{"title":"x","projectId":"prj_inbox","priority":"
 
 ## Reading the result
 
-```text
-path                             time  interactions  requests  model calls  tokens
-browser (recorded UI replay)  7860 ms             5        33            0  unavailable
-ghostapi (direct API)           68 ms             0         1            0  0
-
-115.6× faster through the discovered API.
-```
+The current figures for this repository live in
+[benchmark-results.md](benchmark-results.md), generated from
+`benchmark-results.json`. No table in the documentation is typed by hand.
 
 - **interactions** — steps the browser path had to perform. The API path performs
   none, which is the point.

@@ -39,6 +39,20 @@ describe('inferOperations', () => {
     }
   });
 
+  it('does not make the browser fallback wait for network idle', () => {
+    const result = inferOperations({ target, observations: [uiFixture(), networkFixture()] });
+    const fallback = result.operations.find((item) => item.name === 'createTodo')?.fallbacks[0];
+    if (fallback?.type === 'browser') {
+      const settles = fallback.steps.filter(
+        (step) => step.action === 'waitFor' && !step.selector && !step.urlContains,
+      );
+      expect(settles.length).toBeGreaterThan(0);
+      for (const settle of settles) {
+        expect(settle.action === 'waitFor' && settle.timeoutMs).toBeLessThanOrEqual(2_000);
+      }
+    }
+  });
+
   it('records the UI trigger that produced the operation', () => {
     const result = inferOperations({ target, observations: [uiFixture(), networkFixture()] });
     const operation = result.operations.find((item) => item.name === 'createTodo');
