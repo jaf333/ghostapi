@@ -141,3 +141,17 @@ export function confidenceBar(confidence: number): string {
 export function emitJson(value: unknown): void {
   process.stdout.write(`${JSON.stringify(value, null, 2)}\n`);
 }
+
+/**
+ * The first sentence of a description.
+ *
+ * Splitting on `.` alone cuts "Authenticate against http://127.0.0.1:4123."
+ * down to "Authenticate against http://127" — a host, a port and the meaning
+ * all lost to a dot inside an address. A sentence ends with a period followed
+ * by whitespace or the end of the string.
+ */
+export function firstSentence(text: string): string {
+  const trimmed = text.trim();
+  const match = /^(.*?[.!?])(\s|$)/s.exec(trimmed);
+  return (match?.[1] ?? trimmed).replace(/[.!?]$/, '');
+}

@@ -14,7 +14,7 @@ numbers — never post a figure you did not just measure.
 >
 > Now any agent can use it without the browser.
 >
-> 1826ms → 10ms. Same result.
+> 2390ms → 2ms. Same result.
 >
 > [video]
 

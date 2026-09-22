@@ -11,7 +11,17 @@ import {
 import { PlaywrightDriver, type CaptureSink } from '@ghostapi/browser';
 import { boolFlag, parse, requirePositional, stringFlag, type Parsed } from '../args.js';
 import { openStore } from '../context.js';
-import { emitJson, heading, keyValues, note, out, step, style, symbols } from '../ui.js';
+import {
+  emitJson,
+  firstSentence,
+  heading,
+  keyValues,
+  note,
+  out,
+  step,
+  style,
+  symbols,
+} from '../ui.js';
 import { runDiscovery } from './observe.js';
 
 function timestamp(at: number): string {
@@ -189,7 +199,7 @@ export async function openCommand(argv: readonly string[]): Promise<void> {
     out(
       `  ${style.bold(operation.name.padEnd(18))} ${style.gray(
         `${Math.round(operation.confidence * 100)}%`.padStart(4),
-      )}  ${style.gray(operation.description.split('.')[0] ?? '')}`,
+      )}  ${style.gray(firstSentence(operation.description))}`,
     );
   }
   out();

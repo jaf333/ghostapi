@@ -100,13 +100,28 @@ export const instrumentScript = `
       .filter(Boolean);
   };
 
-  const describe = (el) => ({
-    selector: selectorFor(el),
-    tagName: el && el.tagName ? el.tagName.toLowerCase() : undefined,
-    role: el && el.getAttribute ? el.getAttribute('role') || undefined : undefined,
-    label: labelFor(el),
-    text: el && el.textContent ? sample(el.textContent.trim()) : undefined,
-  });
+  // A container's textContent is every descendant's text run together. Reading a
+  // <form> that way names it "InboxLaunchHome low normal high Create", and a
+  // <select> by the options it holds rather than by what it is. Neither names
+  // anything. A submit is named by the control that submitted it; a field is
+  // named by its label.
+  const NAMELESS_BY_CONTENT = { form: true, select: true, input: true, textarea: true, fieldset: true };
+
+  const visibleText = (el) =>
+    el && el.textContent ? sample(el.textContent.trim().replace(/\\s+/g, ' ')) || undefined : undefined;
+
+  const describe = (el, namedBy) => {
+    const tag = el && el.tagName ? el.tagName.toLowerCase() : undefined;
+    const namer = namedBy || el;
+    const named = namer !== el || !NAMELESS_BY_CONTENT[tag];
+    return {
+      selector: selectorFor(el),
+      tagName: tag,
+      role: el && el.getAttribute ? el.getAttribute('role') || undefined : undefined,
+      label: labelFor(el),
+      text: named ? visibleText(namer) : undefined,
+    };
+  };
 
   document.addEventListener(
     'click',
@@ -135,7 +150,7 @@ export const instrumentScript = `
         form.querySelector('button[type="submit"], input[type="submit"], button:not([type])');
       report('ui', {
         type: 'submit',
-        ...describe(form),
+        ...describe(form, submitter),
         submitterSelector: submitter ? selectorFor(submitter) : undefined,
         url: location.href,
         formFields: fieldsOf(form),

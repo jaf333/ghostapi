@@ -35,7 +35,7 @@ missing it. This makes single-session discovery conservative — often _too_
 conservative — but the alternative is shipping guesses as types. I'd rather be
 under-confident and say so.
 
-**3. The benchmark.** The repo reports 1826 ms (browser) vs 10 ms (API), 182.6×.
+**3. The benchmark.** The repo reports 2390 ms (browser) vs 2 ms (API), 1195×.
 I want to be precise about what that is: the browser figure is a **scripted
 replay** of recorded UI steps with **no model in the loop**. I can't measure an
 LLM browser agent I didn't build, and inventing its numbers would be dishonest.

@@ -15,8 +15,8 @@ Record at 60fps, export at 1920×1080.
 | 0:08–0:14 | Create a todo in the UI. Split view: network feed scrolling in the terminal. | _Use it once._                                      |
 | 0:14–0:18 | Close the browser. Terminal prints the derived operations.                   | _8 operations derived._                             |
 | 0:18–0:22 | `ghostapi inspect createTodo` — schema, confidence, evidence.                | _With schemas, confidence and evidence._            |
-| 0:22–0:26 | `ghostapi ask "create a todo called buy coffee"` → 201, 24 ms.               | _No browser. No DOM. No vision model._              |
-| 0:26–0:30 | Benchmark table, then the repo URL.                                          | _1826 ms → 10 ms._                                  |
+| 0:22–0:26 | `ghostapi ask "create a todo called buy coffee"` → 201, 8 ms.                | _No browser. No DOM. No vision model._              |
+| 0:26–0:30 | Benchmark table, then the repo URL.                                          | _2390 ms → 2 ms._                                   |
 
 ---
 
@@ -35,7 +35,7 @@ Record at 60fps, export at 1920×1080.
 
 0:00 paste URL → 0:04 click "Create" in the UI → 0:07 "Operation discovered:
 createTodo, 94%" → 0:10 `ghostapi ask "create buy coffee"` → 0:13 todo appears →
-0:15 `1826ms → 10ms`.
+0:15 `2390ms → 2ms`.
 
 ---
 

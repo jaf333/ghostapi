@@ -9,7 +9,7 @@ import {
 } from '@ghostapi/exporters';
 import { boolFlag, parse, requirePositional, stringFlag } from '../args.js';
 import { openStore } from '../context.js';
-import { emitJson, heading, keyValues, note, out, step, style } from '../ui.js';
+import { emitJson, firstSentence, heading, keyValues, note, out, step, style } from '../ui.js';
 
 const KINDS = ['mcp', 'skill', 'ts', 'target'] as const;
 type Kind = (typeof KINDS)[number];
@@ -85,7 +85,7 @@ export async function exportCommand(argv: readonly string[]): Promise<void> {
     ]);
     out();
     for (const operation of result.selection.selected) {
-      step(`${operation.name} ${style.gray(operation.description.split('.')[0] ?? '')}`);
+      step(`${operation.name} ${style.gray(firstSentence(operation.description))}`);
     }
     reportExcluded(result.selection.excluded);
     out();
