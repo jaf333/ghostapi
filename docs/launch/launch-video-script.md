@@ -8,7 +8,10 @@ text on screen comes from `node scripts/capture-demo-output.mjs`, and both
 figures in the closing comparison come from `docs/benchmark-results.json`.
 Nothing is written for the camera.
 
-Source project: `ghostapi-video/videos/ghostapi-launch` (HyperFrames).
+Source project: `ghostapi-video/videos/ghostapi-launch` (HyperFrames), kept
+outside this repository so the toolchain and the renders stay out of it.
+Built: `renders/ghostapi-launch-1x1.mp4` (X, LinkedIn) and
+`renders/ghostapi-launch-16x9.mp4` (README, Hacker News, YouTube).
 
 ---
 
@@ -17,7 +20,7 @@ Source project: `ghostapi-video/videos/ghostapi-launch` (HyperFrames).
 | 0.00–4.27   | 1 The clicking        | A cursor works a spare form; each click prints `POST /api/todos 201` into a column beside it                           | _Your browser agent is clicking through a UI that's already calling a clean API._             |
 | 4.27–11.27  | 2 Watching            | The live discovery feed: `click Create` → `submit Create` → `POST /api/todos 201`, ×3, then `✓ 8 operation(s) derived` | _GhostAPI watches while you use the app once, matching every click to the request it caused._ |
 | 11.27–15.68 | 3 The receipt         | `confidence █████████░ 94% likely`, `verified not yet replayed`, the priority enum, `submit form "Create" ×5`          | _It derives the operation — typed, with a confidence and the evidence behind it._             |
-| 15.68–19.72 | 4 Without the browser | `ghostapi ask "create a todo called buy coffee"` → `engine heuristic` → `201`, `7 ms`                                  | _Then it runs without the browser. Plain language in, a typed call out._                      |
+| 15.68–19.72 | 4 Without the browser | `ghostapi ask "create a todo called buy coffee"` → `engine heuristic` → `201`, `8 ms`                                  | _Then it runs without the browser. Plain language in, a typed call out._                      |
 | 19.72–23.53 | 5 Handed over         | Four MCP tools written; beneath a rule, the withheld ones with their reasons                                           | _Your agent gets an MCP server. Destructive tools held back._                                 |
 | 23.53–27.03 | 6 The number          | `2390 ms` against `2 ms`, with the measurement's fine print under both                                                 | _Two point four seconds of clicking, down to two milliseconds._                               |
 | 27.03–30.03 | 7 The repository      | The mascot, `GhostAPI`, `MIT · github.com/jaf333/ghostapi`, held still                                                 | — (silent)                                                                                    |
