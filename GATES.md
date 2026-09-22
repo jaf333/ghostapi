@@ -77,4 +77,9 @@ Scope: A working open-source GhostAPI MVP that observes a real web app in a real
 - [x] G15: README and launch docs let an outside reader install and reproduce the demo; every number printed in the README is produced by a command in the repository rather than written by hand.
       CHECK: node scripts/gates/check-docs.mjs
       EXPECT: GATE_G15_DOCS_OK
-      EVIDENCE: 2026-09-21 22:22 — ran `node scripts/gates/check-docs.mjs`; printed GATE_G15_DOCS_OK — every README figure matched docs/benchmark-results.json (1826 ms to 10 ms, 182.6x)
+      EVIDENCE: 2026-09-22 09:58 — ran `node scripts/gates/check-docs.mjs`; printed GATE_G15_DOCS_OK — every README figure matched docs/benchmark-results.json (2390 ms to 2 ms, 1195x), re-measured the same day
+
+- [ ] G16: GhostAPI derives and replays a usable operation from a real third-party web application — not the reference app in this repository — and the applications it cannot handle are named along with the reason.
+      CHECK: node scripts/verify.mjs real-targets
+      EXPECT: GATE_G16_REAL_TARGETS_OK
+      EVIDENCE: not yet earned. Everything above is proven against `apps/demo-target`, which this repository wrote. Until this gate is green the honest claim is "it derives operations from the reference application", and any launch should expect that objection first. The procedure, and what the gate must assert, are in [docs/launch/real-target-validation.md](docs/launch/real-target-validation.md).

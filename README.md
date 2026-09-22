@@ -292,6 +292,11 @@ Only use it on applications you are allowed to automate.
 
 ## Honest limits
 
+- **Everything in `GATES.md` is proven against the reference application in this
+  repository, which this repository wrote.** GhostAPI has not yet earned a gate
+  against a third-party application; that one is open as G16, with its procedure
+  in [docs/launch/real-target-validation.md](docs/launch/real-target-validation.md).
+  Read every claim below with that in mind.
 - GhostAPI discovers what it _observes_. An operation you never performed does
   not exist to it.
 - Some applications cannot be replayed: per-form CSRF tokens, signed request
