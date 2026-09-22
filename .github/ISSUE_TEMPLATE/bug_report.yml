@@ -1,0 +1,54 @@
+name: Bug report
+description: Something GhostAPI did that it should not have done.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Never paste a cookie, token or `auth.json`. If output contains one, GhostAPI
+        has a redaction bug — say so and report it as a security advisory instead.
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: The command you ran and the output you got. Trim it to the decisive lines.
+      render: console
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected instead
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction
+      description: >
+        Best case, reproduce it against the reference app in this repository
+        (`apps/demo-target`) and give the steps. If it only happens against a
+        real application, say which kind of request is involved — not the URL
+        if it is private.
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: GhostAPI version
+      placeholder: "0.1.0, or a commit SHA"
+    validations:
+      required: true
+
+  - type: textarea
+    id: doctor
+    attributes:
+      label: ghostapi doctor
+      description: Paste the output. It reports Node, Chrome, workspace and engine state.
+      render: console
+    validations:
+      required: true

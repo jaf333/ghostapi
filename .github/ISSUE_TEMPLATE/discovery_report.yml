@@ -1,0 +1,49 @@
+name: Discovery report
+description: An operation GhostAPI failed to derive, derived wrongly, or could not replay.
+labels: [discovery]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        These reports are how discovery gets better. Redact anything private — the
+        shape of the traffic matters, its contents rarely do.
+
+  - type: dropdown
+    id: stage
+    attributes:
+      label: Where it broke
+      options:
+        - Nothing was discovered at all
+        - The operation was discovered but named or typed wrongly
+        - The schema was wrong (missing field, bad enum, wrong optionality)
+        - Discovery was fine, `run` failed to replay it
+        - The confidence was clearly wrong in either direction
+    validations:
+      required: true
+
+  - type: textarea
+    id: app
+    attributes:
+      label: The application
+      description: >
+        What kind of app, and what its API looks like — REST, GraphQL, RPC,
+        Server Actions, something else. Name it only if it is public.
+    validations:
+      required: true
+
+  - type: textarea
+    id: observed
+    attributes:
+      label: What GhostAPI produced
+      description: "`ghostapi operations` and `ghostapi inspect <name> --json`, with anything private removed."
+      render: console
+    validations:
+      required: true
+
+  - type: textarea
+    id: truth
+    attributes:
+      label: What the correct operation would have been
+      description: Name, inputs, method and path shape. `POST /api/{tenant}/orders`, not the real tenant.
+    validations:
+      required: true

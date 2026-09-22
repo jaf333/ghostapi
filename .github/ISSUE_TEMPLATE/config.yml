@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security issue
+    url: https://github.com/jaf333/ghostapi/security/advisories/new
+    about: Report privately as a security advisory. Never as a public issue.
+  - name: Question or idea
+    url: https://github.com/jaf333/ghostapi/discussions
+    about: Anything that is not a defect.
