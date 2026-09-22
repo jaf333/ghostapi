@@ -27,7 +27,8 @@
     "templates"
   ],
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
     "build": "tsc -b && node scripts/copy-templates.mjs",
