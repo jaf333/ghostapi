@@ -20,6 +20,17 @@ pnpm lint            # formatting
 pnpm verify          # every gate in GATES.md, end to end
 ```
 
+Anything that quotes GhostAPI's output — the README, a talk, a video — quotes a
+file this produces, never a transcript somebody typed:
+
+```bash
+node scripts/capture-demo-output.mjs --out ./out/capture
+```
+
+It starts the reference application, replays `examples/demo-session.json` through
+a real browser in a throwaway workspace, and writes each command's exact stdout
+to its own file.
+
 `pnpm verify` is this project's CI. It is a plain Node script with no service
 dependencies, so it runs identically on a laptop and on whatever runner you
 point at it. Individual gates take a filter:

@@ -63,6 +63,7 @@ observed      5 time(s)
 confidence    █████████░  94%  likely
 verified      not yet replayed
 destructive   no
+idempotent    no
 auth          browser session cookies
 transports    http → browser
 
@@ -70,8 +71,8 @@ UI triggers observed
   • submit form "Create" ×5
 
 Inputs
-  name       type                 required
-  priority   high | low | normal  required
+  name       type
+  priority   high | low | normal  required  e.g. "high"
   projectId  string               required  e.g. "prj_inbox"
   title      string               required  e.g. "Buy milk"
 ```
@@ -86,7 +87,7 @@ transport  http
 request    POST http://127.0.0.1:4123/api/todos
 auth       browser session cookies (demo_session)
 status     201
-latency    26 ms
+latency    13 ms
 ```
 
 ---
@@ -344,7 +345,7 @@ Arguments
 
 Execution
 status     201
-latency    24 ms
+latency    8 ms
 ```
 
 Routing is a **closed choice** over known operation names — a page cannot
