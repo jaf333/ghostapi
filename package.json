@@ -19,7 +19,9 @@
     "demo:target": "node apps/demo-target/dist/server.js",
     "ghostapi": "node packages/cli/dist/bin.js",
     "e2e": "node scripts/e2e-vertical-slice.mjs",
-    "verify": "node scripts/verify.mjs"
+    "verify": "node scripts/verify.mjs",
+    "prepare:npm": "node scripts/prepare-npm.mjs",
+    "release": "pnpm build && node scripts/prepare-npm.mjs && pnpm -r publish --access public"
   },
   "devDependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
@@ -28,5 +30,14 @@
     "turbo": "^2.3.3",
     "typescript": "^5.7.2",
     "vitest": "^2.1.8"
+  },
+  "author": "Jesus Antolin",
+  "homepage": "https://github.com/jaf333/ghostapi#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jaf333/ghostapi.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jaf333/ghostapi/issues"
   }
 }

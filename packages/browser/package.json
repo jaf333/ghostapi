@@ -3,6 +3,16 @@
   "version": "0.1.0",
   "description": "Real-browser session driver and CDP network/UI capture for GhostAPI.",
   "license": "MIT",
+  "author": "Jesus Antolin",
+  "homepage": "https://github.com/jaf333/ghostapi#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jaf333/ghostapi.git",
+    "directory": "packages/browser"
+  },
+  "bugs": {
+    "url": "https://github.com/jaf333/ghostapi/issues"
+  },
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -15,6 +25,9 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc -b",
     "typecheck": "tsc -b",

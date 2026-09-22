@@ -52,6 +52,6 @@ export function printHelp(): void {
   out(`  ghostapi ask "create a todo called buy coffee"`);
   out(`  ghostapi export mcp`);
   out();
-  note('Docs: https://github.com/ghostapi/ghostapi');
+  note('Docs: https://github.com/jaf333/ghostapi');
   out();
 }

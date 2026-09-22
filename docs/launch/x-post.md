@@ -80,7 +80,7 @@ numbers — never post a figure you did not just measure.
 > MIT. Reference app, recorded session and benchmark script in the repo, so you
 > can reproduce every number without touching anyone else's website.
 >
-> github.com/ghostapi/ghostapi
+> github.com/jaf333/ghostapi
 
 ---
 

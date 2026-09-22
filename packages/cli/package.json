@@ -3,15 +3,16 @@
   "version": "0.1.0",
   "description": "Turn web apps into agent-native operations. GhostAPI watches a web app, derives the operations behind its UI, and exposes them as typed tools for AI agents.",
   "license": "MIT",
-  "type": "module",
-  "bin": {
-    "ghostapi": "./dist/bin.js"
+  "author": "Jesus Antolin",
+  "homepage": "https://github.com/jaf333/ghostapi#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jaf333/ghostapi.git",
+    "directory": "packages/cli"
   },
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "bugs": {
+    "url": "https://github.com/jaf333/ghostapi/issues"
+  },
   "keywords": [
     "mcp",
     "agents",
@@ -21,8 +22,20 @@
     "openapi",
     "ai"
   ],
+  "type": "module",
+  "bin": {
+    "ghostapi": "./dist/bin.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "engines": {
     "node": ">=20.11"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build": "tsc -b",

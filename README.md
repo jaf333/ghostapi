@@ -143,7 +143,7 @@ per-target profile, so you sign in by hand, once, exactly as you normally would.
 From source:
 
 ```bash
-git clone https://github.com/ghostapi/ghostapi
+git clone https://github.com/jaf333/ghostapi
 cd ghostapi
 pnpm install
 pnpm build

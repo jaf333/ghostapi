@@ -3,3 +3,6 @@ dist
 .turbo
 pnpm-lock.yaml
 assets
+
+# Generated for publishing by scripts/prepare-npm.mjs.
+packages/cli/README.md

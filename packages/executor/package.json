@@ -3,6 +3,16 @@
   "version": "0.1.0",
   "description": "Executes normalized GhostAPI operations over HTTP, GraphQL or the browser.",
   "license": "MIT",
+  "author": "Jesus Antolin",
+  "homepage": "https://github.com/jaf333/ghostapi#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jaf333/ghostapi.git",
+    "directory": "packages/executor"
+  },
+  "bugs": {
+    "url": "https://github.com/jaf333/ghostapi/issues"
+  },
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -15,6 +25,9 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc -b",
     "typecheck": "tsc -b",
