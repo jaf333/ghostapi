@@ -12,12 +12,12 @@ Five posts, not eight. A thread nobody finishes is a thread nobody shares.
 
 ## 1/ — the opener
 
-> Your agent spends forty seconds clicking through a UI that is already making
-> clean API calls.
+> A browser can repeat UI steps that already trigger API calls.
 >
-> I made those clicks once. GhostAPI learned the operation behind them.
+> I used a reference app. GhostAPI observed the action and derived a typed
+> operation from its network traffic.
 >
-> Now it takes 2 ms and zero tokens.
+> It can replay that operation with a direct HTTP request.
 >
 > [video]
 
@@ -55,11 +55,11 @@ Lead with the video. No preamble, no "excited to share".
 
 ## 4/ — the honest benchmark
 
-> 2390 ms → 2 ms, median of 5 timed runs after one warm-up.
+> In our local reference app: 2390 ms → 2 ms, median of 5 timed runs after one
+> warm-up.
 >
-> The honest version: the browser figure is a _scripted replay_ with no model in
-> the loop. A real LLM browser agent is slower still, so the comparison
-> understates the gap.
+> The browser figure is a _scripted replay_ with no model in the loop. Neither
+> path measures an LLM agent or its token usage.
 >
 > Anything we can't measure prints "unavailable". Never an estimate.
 

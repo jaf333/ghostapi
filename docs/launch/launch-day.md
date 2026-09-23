@@ -39,11 +39,10 @@ The launch film is built. Nothing is public and nothing is published.
 ### Deliberately not done
 
 **No GitHub Actions workflows.** The standing policy on the machine this was
-built on retired Actions as a CI executor. `pnpm verify` is the project's CI: a
-plain Node script with no service dependencies that runs identically on a laptop
-and on any runner. If you want a green check on contributors' pull requests,
-re-enabling Actions for this repository alone is a deliberate exception — decide
-it, don't drift into it.
+built on retired Actions as a CI executor. `pnpm verify` is the project's
+validation command. Run validation and coordinate integration/publication from
+builder-1 under the current common operating policy. Do not re-enable Actions
+or use an obsolete required check as a publishing gate.
 
 ---
 
