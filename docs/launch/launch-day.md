@@ -3,6 +3,11 @@
 Written 2026-09-22, to be picked up cold. Nothing here assumes you remember the
 session that produced it.
 
+**Update 2026-09-23:** The source repository is public at
+`github.com/jaf333/ghostapi` on commit `d54f505`, and builder-1 passed 15/15
+gates on that commit. The npm release and X account/post are pending their
+account sign-in steps. The section below records the 2026-09-22 baseline.
+
 ---
 
 ## State on 2026-09-22

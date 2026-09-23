@@ -16,6 +16,10 @@ Browser when necessary. APIs whenever possible.
 
 ---
 
+**Source preview:** the npm packages are still being published. Clone and build
+the repository using the [from-source instructions](#install) to try GhostAPI
+today. The `npx` commands below describe the CLI once its npm release is live.
+
 ```bash
 npx ghostapi open https://app.example.com
 # sign in, use the app once, close the window
@@ -134,14 +138,10 @@ measure prints `unavailable`, never an estimate.
 
 ## Install
 
-```bash
-npx ghostapi doctor      # checks Chrome, Node, sessions, decision engines
-```
-
 Requires Node ≥ 20.11 and Google Chrome. GhostAPI drives _your_ Chrome through a
 per-target profile, so you sign in by hand, once, exactly as you normally would.
 
-From source:
+From source, while the npm release is pending:
 
 ```bash
 git clone https://github.com/jaf333/ghostapi
@@ -150,6 +150,9 @@ pnpm install
 pnpm build
 node packages/cli/dist/bin.js doctor
 ```
+
+After the npm release is available, `npx ghostapi doctor` checks Chrome, Node,
+sessions and decision engines without cloning the repository.
 
 ---
 
