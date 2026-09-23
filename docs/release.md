@@ -7,9 +7,11 @@ only correct if that sibling was published from the same commit.
 
 ## One-time setup
 
+Create the `ghostapi` organization in the npm website with a free public
+packages plan, then log in on the release host:
+
 ```bash
 npm login                                   # against registry.npmjs.org
-npm org create ghostapi                     # claims the @ghostapi scope, free for public packages
 ```
 
 The repository's `.npmrc` pins `registry.npmjs.org`, so a globally configured

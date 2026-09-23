@@ -67,10 +67,8 @@ which one failed and why.
 them on the day you decide to launch, not the day you launch — a name taken in
 between is a broken README.
 
-```bash
-npm login                  # registry.npmjs.org
-npm org create ghostapi    # claims the @ghostapi scope, free for public packages
-```
+Create the `ghostapi` organization on the npm website using its free public
+packages plan. Then run `npm login` on builder-1 against `registry.npmjs.org`.
 
 This could not be automated: both npm tokens in the macOS Keychain return 401.
 

@@ -20,6 +20,7 @@ try {
   server = spawn('npx', ['next', 'start', '--port', String(PORT)], {
     cwd: WEB,
     env: { ...process.env, GHOSTAPI_CWD: cwd },
+    detached: process.platform !== 'win32',
     stdio: ['ignore', 'pipe', 'pipe'],
   });
 
@@ -65,6 +66,17 @@ try {
   process.stdout.write(`web UI built and rendered ${slug} from the real store\n`);
   pass('GATE_G14_WEB_OK');
 } finally {
-  server?.kill('SIGTERM');
+  if (server) {
+    // npx starts Next in a child process. Killing only npx leaves that child
+    // holding the output pipes open and prevents this gate from exiting.
+    try {
+      if (process.platform === 'win32') server.kill('SIGTERM');
+      else process.kill(-server.pid, 'SIGTERM');
+    } catch (error) {
+      if (error.code !== 'ESRCH') throw error;
+    }
+    server.stdout?.destroy();
+    server.stderr?.destroy();
+  }
   await target.stop();
 }
